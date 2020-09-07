@@ -20,5 +20,5 @@ peer channel update -o orderer.example.com:7050 -c supplierfarmerchannel -f ./ch
 echo "======================================================"
 
 echo "==================channel install for peer0.org1.example.com====================="
-peer chaincode install -n supplierfarmerchaincode -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/farmer_supplier/node/
+peer chaincode install -n farmersupplierchaincode -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/farmer_supplier/node/
 echo "====================================================="

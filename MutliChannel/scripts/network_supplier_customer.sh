@@ -1,4 +1,4 @@
-CRC_SRC_PATH="/opt/gopath/src/github.com/chaincode/farmer_supplier/node/"
+CRC_SRC_PATH="/opt/gopath/src/github.com/chaincode/supplier_customer/node/"
 
 CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
 CORE_PEER_ADDRESS=peer0.org2.example.com:9051
@@ -8,13 +8,13 @@ CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/c
 echo "==========  Enviorment variables are set==============="
 
 echo "==================Joining for peer0.org2.example.com:9051======================="
-peer channel join -b supplierfarmerchannel.block
+peer channel join -b suppliercustomerchannel.block
 echo "======================================================"
 
 echo "==================Update anchor peers for peer0.org2.example.com====================="
-peer channel update -o orderer.example.com:7050 -c supplierfarmerchannel -f ./channel-artifacts/Org2MSPanchors_farmer.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+peer channel update -o orderer.example.com:7050 -c suppliercustomerchannel -f ./channel-artifacts/Org2MSPanchors_customer.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 echo "======================================================"
 
 echo "==================channel install for peer0.org2.example.com====================="
-peer chaincode install -n supplierfarmerchaincode -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/farmer_supplier/node/
+peer chaincode install -n suppliercustomerchaincode -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/supplier_customer/node/
 echo "====================================================="

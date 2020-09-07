@@ -415,7 +415,7 @@ Profiles:
             Capabilities:
                 <<: *ApplicationCapabilities
 
-    LogisticsChannel:
+    LogisticsToAllChannel:
         Consortium: SampleConsortium
         <<: *ChannelDefaults
         Application:
