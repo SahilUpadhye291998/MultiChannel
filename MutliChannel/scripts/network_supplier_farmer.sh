@@ -15,6 +15,8 @@ echo "==================Update anchor peers for peer0.org2.example.com==========
 peer channel update -o orderer.example.com:7050 -c supplierfarmerchannel -f ./channel-artifacts/Org2MSPanchors_farmer.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 echo "======================================================"
 
-echo "==================channel install for peer0.org2.example.com====================="
-peer chaincode install -n supplierfarmerchaincode -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/farmer_supplier/node/
-echo "====================================================="
+# echo "==================channel install for peer0.org2.example.com====================="
+# peer chaincode install -n supplierfarmerchaincode -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/farmer_supplier/node/
+# echo "====================================================="
+
+# peer lifecycle chaincode queryinstalled | grep -n 2 | awk '{print $3}'

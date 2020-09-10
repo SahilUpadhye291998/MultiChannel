@@ -243,23 +243,29 @@ function generateChannelArtifacts(){
 function networkUp(){
     if [ ! -d "crypto-config" ]; then
         generateCerts
+        # replacePrivateKey
         generateChannelArtifacts
     fi
     if [ "${CERTIFICATE_AUTHORITIES}" == "true" ]; then
+      export BYFN_CA1_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk)
+      export BYFN_CA2_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk)
+      export BYFN_CA3_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org3.example.com/ca && ls *_sk)
+      export BYFN_CA4_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org4.example.com/ca && ls *_sk)
+      # docker-compose -f docker-compose-e2e.yaml -f docker-compose-couch.yaml -f docker-compose-multi-net.yaml up -d
       docker-compose -f docker-compose-ca.yaml -f docker-compose-couch.yaml -f docker-compose-multi-net.yaml up -d
       docker ps
-      echo "==================================================================="
-      echo "==================================================================="
-      echo "==================================================================="
-      echo "                         Installing chaincode                      "
-      echo "==================================================================="
-      echo "==================================================================="
-      echo "==================================================================="
+      # echo "==================================================================="
+      # echo "==================================================================="
+      # echo "==================================================================="
+      # echo "                         Installing chaincode                      "
+      # echo "==================================================================="
+      # echo "==================================================================="
+      # echo "==================================================================="
       docker exec cli_farmer_supplier /bin/sh -c "scripts/network_farmer_supplier.sh"
       docker exec cli_farmer_supplier /bin/sh -c "scripts/network_supplier_farmer.sh"
-      docker exec cli_customer_supplier /bin/sh -c "scripts/network_customer_supplier.sh"
-      docker exec cli_customer_supplier /bin/sh -c "scripts/network_supplier_customer.sh"
-      docker exec cli_logistics /bin/sh -c "scripts/network_logistics.sh"
+      # docker exec cli_customer_supplier /bin/sh -c "scripts/network_customer_supplier.sh"
+      # docker exec cli_customer_supplier /bin/sh -c "scripts/network_supplier_customer.sh"
+      # docker exec cli_logistics /bin/sh -c "scripts/network_logistics.sh"
       # echo "==================================================================="
       # echo "==================================================================="
       # echo "==================================================================="
@@ -267,7 +273,8 @@ function networkUp(){
       # echo "==================================================================="
       # echo "==================================================================="
       # echo "==================================================================="
-      # docker exec cli /bin/sh -c "scripts/testChainCode_foodManagement_customer.sh"
+      # docker exec cli_farmer_supplier /bin/sh -c "scripts/installing_chaincode_network_farmer_supplier.sh"
+      # docker exec cli_farmer_supplier /bin/sh -c "scripts/invoke_install_check.sh"
       # docker exec cli /bin/sh -c "scripts/testChainCode_foodManagement_supplier.sh"
       # docker exec cli /bin/sh -c "scripts/testChainCode_foodManagement_farmer.sh"
       # docker exec cli /bin/sh -c "scripts/testChainCode_foodManagement.sh"
@@ -293,6 +300,45 @@ function networkDown() {
     docker volume prune
   fi
 
+}
+
+function replacePrivateKey(){
+    # sed on MacOSX does not support -i flag with a null extension. We will use
+    # 't' for our back-up's extension and delete it at the end of the function
+    ARCH=$(uname -s | grep Darwin)
+    if [ "$ARCH" == "Darwin" ]; then
+        OPTS="-it"
+    else
+        OPTS="-i"
+    fi
+
+    # Copy the template to the file that will be modified to add the private key
+    sudo cp docker-compose-e2e-template.yaml docker-compose-e2e.yaml
+
+    # The next steps will replace the template's contents with the
+    # actual values of the private key file names for the two CAs.
+    CURRENT_DIR=$PWD
+    cd crypto-config/peerOrganizations/org1.example.com/ca/
+    PRIV_KEY=$(ls *_sk)
+    cd "$CURRENT_DIR"
+    sudo sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    cd crypto-config/peerOrganizations/org2.example.com/ca/
+    PRIV_KEY=$(ls *_sk)
+    cd "$CURRENT_DIR"
+    sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    cd crypto-config/peerOrganizations/org3.example.com/ca/
+    PRIV_KEY=$(ls *_sk)
+    cd "$CURRENT_DIR"
+    sed $OPTS "s/CA3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    cd crypto-config/peerOrganizations/org4.example.com/ca/
+    PRIV_KEY=$(ls *_sk)
+    cd "$CURRENT_DIR"
+    sed $OPTS "s/CA4_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+    # If MacOSX, remove the temporary backup of the docker-compose file
+    if [ "$ARCH" == "Darwin" ]; then
+        rm docker-compose-e2e.yamlt
+    fi
 }
 
 CONSENSUS_TYPE="solo"
@@ -323,6 +369,7 @@ if [ "$MODE" == "generate" ]; then
     echo "####################    Generate PreReq   #######################"
     echo "#################################################################"
     generateCerts
+    # replacePrivateKey
     generateChannelArtifacts
 elif [ "$MODE" == "up" ]; then
     networkUp
