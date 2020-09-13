@@ -30,6 +30,123 @@ let ChainCode = class {
     }
   }
 
+  async initLogistics(stub, args, thisClass) {
+    if (args.length != 5) {
+      throw new Error("Incorrect number of arguments. Expecting 4");
+    }
+    console.info("--- start init logisticss ---");
+    if (args[0].length <= 0) {
+      throw new Error("1st argument must be a non-empty string");
+    }
+    if (args[1].length <= 0) {
+      throw new Error("2nd argument must be a non-empty string");
+    }
+    if (args[2].length <= 0) {
+      throw new Error("3rd argument must be a non-empty string");
+    }
+    if (args[3].length <= 0) {
+      throw new Error("4th argument must be a non-empty string");
+    }
+    if (args[4].length <= 0) {
+      throw new Error("5th argument must be a non-empty string");
+    }
+    let logisticsName = args[0];
+    let logisticsAddress = args[1];
+    let logisticsMobile = args[2];
+    let logisticsSecret = args[3];
+    let logisticsAmount = parseFloat(args[4]);
+    if (typeof logisticsAmount !== "number") {
+      throw new Error(`3rd argument should be a numeric type`);
+    }
+
+    let logisticsState = await stub.getState(logisticsName);
+    if (logisticsState.toString()) {
+      throw new Error(`User already exists`);
+    }
+
+    let logistics = {};
+    logistics.docType = "logistics";
+    logistics.id = logisticsName + logisticsMobile;
+    logistics.name = logisticsName;
+    logistics.mobile = logisticsMobile;
+    logistics.address = logisticsAddress;
+    logistics.secret = logisticsSecret;
+    logistics.amount = logisticsAmount;
+    logistics.logisticsData = [];
+
+    await stub.putState(logistics.id, Buffer.from(JSON.stringify(logistics)));
+
+    let indexName = `secret~id`;
+    let secretNameIndexKey = await stub.createCompositeKey(indexName, [
+      logistics.secret,
+      logistics.id
+    ]);
+    console.log(secretNameIndexKey);
+
+    await stub.putState(secretNameIndexKey, Buffer.from("\u0000"));
+    console.info("end of initialzation");
+  }
+
+  async readLogisticsData(stub, args, thisClass) {
+    if (args.length != 1) {
+      throw new Error(
+        "Incorrect number of arguments. Expecting name of the marble to query"
+      );
+    }
+
+    let argUser = args[0];
+    if (!argUser) {
+      throw new Error(`Name cant be blank`);
+    }
+
+    let logistics = await stub.getState(argUser);
+    if (!logistics) {
+      let jsonResponce = {};
+      jsonResponce.Error = `Unable to find logistics with given phone number`;
+      throw new Error(JSON.stringify(jsonResponce));
+    }
+
+    console.log(
+      "====================================================================="
+    );
+    console.log(logistics.toString());
+    console.log(
+      "====================================================================="
+    );
+    return logistics;
+  }
+
+  async addLogisticsAmount(stub, args, thisClass) {
+    if (args.length < 2) {
+      throw new Error("Incorrect number of arguments");
+    }
+    let logisticsID = args[0];
+    let logisticsAsBytes = await stub.getState(logisticsID);
+    if (!logisticsAsBytes.toString()) {
+      throw new Error(`farmer is not found`);
+    }
+    let logistics = {};
+    try {
+      logistics = JSON.parse(logisticsAsBytes.toString());
+    } catch (error) {
+      let jsonError = {};
+      jsonError.Error = `Unable to decode json of ${args[0]}`;
+      throw new Error(JSON.stringify(jsonError));
+    }
+    if (parseInt(args[1]) < 0) {
+      throw new Error("Invalid price and/or quantity");
+    }
+
+    try {
+      const amount = parseInt(args[1]);
+      logistics.amount += amount;
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+
+    await stub.putState(logisticsID, Buffer.from(JSON.stringify(logistics)));
+  }
+
   async getQueryResultForQueryString(stub, queryString, thisClass) {
     console.info("- getQueryResultForQueryString queryString:\n" + queryString);
     let resultsIterator = await stub.getQueryResult(queryString);
