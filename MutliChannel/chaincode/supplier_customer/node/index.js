@@ -72,14 +72,14 @@ let ChainCode = class {
     supplier.address = supplierAddress;
     supplier.secret = supplierSecret;
     supplier.amount = supplierAmount;
-    supplier.supplier_farmer = [];
+    supplier.supplier_customer = [];
 
     await stub.putState(supplier.id, Buffer.from(JSON.stringify(supplier)));
 
     let indexName = `secret~id`;
     let secretNameIndexKey = await stub.createCompositeKey(indexName, [
       supplier.secret,
-      supplier.id
+      supplier.id,
     ]);
     console.log(secretNameIndexKey);
 
@@ -165,7 +165,7 @@ let ChainCode = class {
     let indexName = `secret~id`;
     let secretNameIndexKey = await stub.createCompositeKey(indexName, [
       customer.secret,
-      customer.id
+      customer.id,
     ]);
     console.log(secretNameIndexKey);
 
@@ -304,7 +304,7 @@ let ChainCode = class {
       supplierID: supplierID,
       productName: args[2],
       productQuantity: args[3],
-      productPrice: args[4]
+      productPrice: args[4],
     };
 
     try {

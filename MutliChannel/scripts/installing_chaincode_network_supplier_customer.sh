@@ -34,7 +34,7 @@ echo "                          make customer supplier tar gz"
 echo "==============================================================="
 peer lifecycle chaincode install suppliercustomer.tar.gz --peerAddresses peer0.org3.example.com:11051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
 
-export CC_PACKAGE_ID=$(peer lifecycle chaincode queryinstalled | grep -n 2 | awk '{print $3}'| awk '{gsub(/,$/,""); print}')
+export CC_PACKAGE_ID=$(peer lifecycle chaincode queryinstalled | grep -n 1 | awk '{print $3}'| awk '{gsub(/,$/,""); print}')
 
 echo "CC_PACKAGE_ID : $CC_PACKAGE_ID"
 
@@ -69,6 +69,7 @@ echo "                          Commiting Readieness chaincode"
 echo "==============================================================="
 peer lifecycle chaincode checkcommitreadiness --channelID suppliercustomerchannel --name suppliercustomer --version 1.0 --sequence 1 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --output json --init-required
 
+sleep 10
 echo "==============================================================="
 echo "                          Commit"
 echo "==============================================================="

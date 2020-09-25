@@ -253,17 +253,19 @@ function networkUp(){
       export BYFN_CA4_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org4.example.com/ca && ls *_sk)
       docker-compose -f docker-compose-ca.yaml -f docker-compose-couch.yaml -f docker-compose-multi-net.yaml up -d
       docker ps
-      # echo "==================================================================="
+      echo "==================================================================="
       echo "==================================================================="
       echo "==================================================================="
       echo "                         Up Network                      "
       echo "==================================================================="
       echo "==================================================================="
-      # echo "==================================================================="
+      echo "==================================================================="
       docker exec cli_farmer_supplier /bin/sh -c "scripts/network_farmer_supplier.sh"
       docker exec cli_farmer_supplier /bin/sh -c "scripts/network_supplier_farmer.sh"
+      sleep 10
       docker exec cli_customer_supplier /bin/sh -c "scripts/network_customer_supplier.sh"
       docker exec cli_customer_supplier /bin/sh -c "scripts/network_supplier_customer.sh"
+      sleep 10
       docker exec cli_logistics /bin/sh -c "scripts/network_logistics.sh"
       echo "==================================================================="
       echo "==================================================================="
@@ -274,7 +276,9 @@ function networkUp(){
       echo "==================================================================="
       sleep 10
       docker exec cli_farmer_supplier /bin/sh -c "scripts/installing_chaincode_network_farmer_supplier.sh"
+      sleep 10
       docker exec cli_customer_supplier /bin/sh -c "scripts/installing_chaincode_network_supplier_customer.sh"
+      sleep 10
       docker exec cli_logistics /bin/sh -c "scripts/installing_chaincode_network_logistics.sh"
       echo "==================================================================="
       echo "==================================================================="
@@ -285,8 +289,10 @@ function networkUp(){
       echo "==================================================================="
       sleep 10
       docker exec cli_farmer_supplier /bin/sh -c "scripts/testinovke-farmer-supplier.sh"
-      # docker exec cli_customer_supplier /bin/sh -c "scripts/testinovke-supplier-customer.sh"
-      # docker exec cli_logistics /bin/sh -c "scripts/testinovke-logistics.sh"
+      sleep 10
+      docker exec cli_customer_supplier /bin/sh -c "scripts/testinovke-supplier-customer.sh"
+      sleep 10
+      docker exec cli_logistics /bin/sh -c "scripts/testinovke-logistics.sh"
 
     else
       docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml up -d

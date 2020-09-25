@@ -122,18 +122,18 @@ peer chaincode query \
 --channelID supplierfarmerchannel --name famersupplier \
 -c '{"Args":["readFarmerData","Farmer112345678"]}'
 
-sleep 10
-echo "==============================================================="
-echo "                          Chaincode Test 10"
-echo "==============================================================="
-peer chaincode query \
---channelID supplierfarmerchannel --name famersupplier \
--c '{"Args":["readFarmerData","Farmer112345678"]}'
+# sleep 10
+# echo "==============================================================="
+# echo "                          Chaincode Test 10"
+# echo "==============================================================="
+# peer chaincode query \
+# --channelID supplierfarmerchannel --name famersupplier \
+# -c '{"Args":["readFarmerData","Farmer112345678"]}'
 
-sleep 10
-echo "==============================================================="
-echo "                          Chaincode Test 11"
-echo "==============================================================="
-peer chaincode query \
---channelID supplierfarmerchannel --name famersupplier \
--c '{"Args":["readFarmerData","Farmer112345678"]}'
+# sleep 10
+# echo "==============================================================="
+# echo "                          Chaincode Test 11"
+# echo "==============================================================="
+# peer chaincode query \
+# --channelID supplierfarmerchannel --name famersupplier \
+# -c '{"Args":["readFarmerData","Farmer112345678"]}'

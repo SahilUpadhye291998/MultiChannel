@@ -79,7 +79,7 @@ let ChainCode = class {
     let indexName = `secret~id`;
     let secretNameIndexKey = await stub.createCompositeKey(indexName, [
       logistics.secret,
-      logistics.id
+      logistics.id,
     ]);
     console.log(secretNameIndexKey);
 
@@ -145,6 +145,42 @@ let ChainCode = class {
     }
 
     await stub.putState(logisticsID, Buffer.from(JSON.stringify(logistics)));
+  }
+
+  async addProduct() {
+    if (args.length < 5) {
+      throw new Error("Incorrect number of arguments");
+    }
+    let logisticsID = args[0];
+    let logisticsAsBytes = await stub.getState(logisticsID);
+    if (!logisticsAsBytes.toString()) {
+      throw new Error(`Logsitcs is not found`);
+    }
+    let logistics = {};
+    try {
+      logistics = JSON.parse(logisticsAsBytes.toString());
+    } catch (error) {
+      let jsonError = {};
+      jsonError.Error = `Unable to decode json of ${args[0]}`;
+      throw new Error(JSON.stringify(jsonError));
+    }
+
+    const product = {
+      customerID: args[1],
+      supplierID: args[2],
+      pickUpLocation: args[3],
+      dropLocation: args[4],
+      productName: args[5],
+      productQuantity: args[6],
+    };
+
+    try {
+      logistics.logisticsData.push(product);
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+
+    await stub.putState(customerID, Buffer.from(JSON.stringify(customer)));
   }
 
   async getQueryResultForQueryString(stub, queryString, thisClass) {

@@ -69,6 +69,7 @@ echo "                          Commiting Readieness chaincode"
 echo "==============================================================="
 peer lifecycle chaincode checkcommitreadiness --channelID supplierfarmerchannel --name famersupplier --version 1.0 --sequence 1 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --output json --init-required
 
+sleep 10
 echo "==============================================================="
 echo "                          Commit"
 echo "==============================================================="
