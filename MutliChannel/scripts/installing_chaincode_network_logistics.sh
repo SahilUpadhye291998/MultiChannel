@@ -9,7 +9,7 @@ echo "************************************************************************"
 echo "==============================================================="
 echo "                          make logistics tar gz"
 echo "==============================================================="
-peer lifecycle chaincode package logistics.tar.gz --path ../../../chaincode/supplier_customer/node/ --lang node --label logistics_1.0
+peer lifecycle chaincode package logistics.tar.gz --path ../../../chaincode/logistics/node/ --lang node --label logistics_1.0
 
 
 export CORE_PEER_TLS_ENABLED=true

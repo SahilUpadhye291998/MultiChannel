@@ -123,7 +123,7 @@ let ChainCode = class {
     let logisticsID = args[0];
     let logisticsAsBytes = await stub.getState(logisticsID);
     if (!logisticsAsBytes.toString()) {
-      throw new Error(`farmer is not found`);
+      throw new Error(`Logistics is not found`);
     }
     let logistics = {};
     try {
@@ -147,7 +147,7 @@ let ChainCode = class {
     await stub.putState(logisticsID, Buffer.from(JSON.stringify(logistics)));
   }
 
-  async addProduct() {
+  async addProduct(stub, args, thisClass) {
     if (args.length < 5) {
       throw new Error("Incorrect number of arguments");
     }
@@ -180,7 +180,7 @@ let ChainCode = class {
       throw new Error(`${error}`);
     }
 
-    await stub.putState(customerID, Buffer.from(JSON.stringify(customer)));
+    await stub.putState(logisticsID, Buffer.from(JSON.stringify(logistics)));
   }
 
   async getQueryResultForQueryString(stub, queryString, thisClass) {
