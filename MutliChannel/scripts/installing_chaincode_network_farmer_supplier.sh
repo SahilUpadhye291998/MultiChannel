@@ -88,3 +88,11 @@ echo "==============================================================="
 echo "                          Check Query Commitness"
 echo "==============================================================="
 peer lifecycle chaincode querycommitted --channelID supplierfarmerchannel --name famersupplier
+
+# echo "==============================================================="
+# echo "                          Try to instantiate Chaincode"
+# echo "==============================================================="
+# peer chaincode instantiate -o orderer.example.com:7050 --tls \
+# --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
+# -C supplierfarmerchannel -n famersupplier -l node -v 1.0 \
+# -c '{"Args":["init"]}' -P "OR ('Org1MSP.peer','Org2MSP.peer')"

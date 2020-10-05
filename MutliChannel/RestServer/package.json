@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "nodemon server.js",
-    "start": "node server.js"
+    "start": "mkdir wallet && sudo chattr -R +a wallet/ && node server.js",
+    "stop": "sudo chattr -R -a wallet/ && rf -rf wallet/"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +14,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "fabric-ca-client": "^2.2.2",
-    "fabric-network": "^2.2.2"
+    "fabric-ca-client": "^2.1.0",
+    "fabric-network": "^2.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
