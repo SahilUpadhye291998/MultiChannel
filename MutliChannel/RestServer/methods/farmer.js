@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 async function registerFarmer(name) {
+  console.log(name);
   try {
     let ccpPath = path.resolve(__dirname, "..", "..", "connection-org1.json");
     let ccpJSON = fs.readFileSync(ccpPath, "utf8");
@@ -16,10 +17,10 @@ async function registerFarmer(name) {
     const wallet = await Wallets.newFileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
-    const userIdentity = await wallet.get("Farmer1");
+    const userIdentity = await wallet.get(name);
     if (userIdentity) {
       console.log(
-        `An identity for the user ${"Farmer1"} already exists in the wallet`
+        `An identity for the user ${name} already exists in the wallet`
       );
       return false;
     }
@@ -39,14 +40,13 @@ async function registerFarmer(name) {
 
     const secret = await ca.register(
       {
-        affiliation: "org1.department1",
-        enrollmentID: "Farmer1",
+        enrollmentID: name,
         role: "client",
       },
       admin1User
     );
     const enrollment = await ca.enroll({
-      enrollmentID: "Farmer1",
+      enrollmentID: name,
       enrollmentSecret: secret,
     });
     const x509Identity = {
@@ -57,13 +57,13 @@ async function registerFarmer(name) {
       mspId: "Org1MSP",
       type: "X.509",
     };
-    await wallet.put("Farmer1", x509Identity);
+    await wallet.put(name, x509Identity);
     console.log(
-      "Successfully registered and enrolled admin1 user Farmer1 and imported it into the wallet"
+      "Successfully registered and enrolled admin1 user name and imported it into the wallet"
     );
     return true;
   } catch (error) {
-    console.error(`Failed to register user "Farmer1": ${error}`);
+    console.error(`Failed to register user name: ${error}`);
     return false;
   }
 }
