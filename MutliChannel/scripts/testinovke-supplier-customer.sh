@@ -5,16 +5,26 @@ echo "==============================================================="
 echo "==============================================================="
 echo "                  Supplier Customer Chaincode"
 echo "==============================================================="
-peer chaincode invoke -o orderer.example.com:7050 \
---ordererTLSHostnameOverride orderer.example.com \
---tls true \
---cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID suppliercustomerchannel --name suppliercustomer \
---peerAddresses peer0.org2.example.com:9051 \
---tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \
---peerAddresses peer0.org3.example.com:11051 \
---tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt \
---isInit -c '{"function":"Init","Args":[]}'
+# peer chaincode invoke -o orderer.example.com:7050 \
+# --ordererTLSHostnameOverride orderer.example.com \
+# --tls true \
+# --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
+# --channelID suppliercustomerchannel --name suppliercustomer \
+# --peerAddresses peer0.org2.example.com:9051 \
+# --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \
+# --peerAddresses peer0.org3.example.com:11051 \
+# --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt \
+# --isInit -c '{"function":"Init","Args":[]}'
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp
+CORE_PEER_ADDRESS=peer0.org3.example.com:11051
+CORE_PEER_LOCALMSPID="Org3MSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
+
+peer chaincode instantiate -o orderer.example.com:7050 \
+--tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
+-C suppliercustomerchannel -n suppliercustomer \
+-c '{"Args":["init"]}' -P "OR ('Org2MSP.member','Org3MSP.member')" -v 1.0
+
 
 sleep 3
 echo "==============================================================="

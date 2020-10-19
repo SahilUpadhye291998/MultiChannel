@@ -2,19 +2,24 @@ echo "==============================================================="
 echo "                          Init Invoke Farmer Supplier"
 echo "==============================================================="
 
-echo "==============================================================="
-echo "                          Chaincode Test 1"
-echo "==============================================================="
-peer chaincode invoke -o orderer.example.com:7050 \
---ordererTLSHostnameOverride orderer.example.com \
---tls true \
---cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
---peerAddresses peer0.org1.example.com:7051 \
---tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
---peerAddresses peer0.org2.example.com:9051 \
---tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \
---isInit -c '{"function":"Init","Args":[]}'
+# echo "==============================================================="
+# echo "                          Chaincode Test 1"
+# echo "==============================================================="
+# peer chaincode invoke -o orderer.example.com:7050 \
+# --ordererTLSHostnameOverride orderer.example.com \
+# --tls true \
+# --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
+# --channelID supplierfarmerchannel --name farmersupplier \
+# --peerAddresses peer0.org1.example.com:7051 \
+# --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
+# --peerAddresses peer0.org2.example.com:9051 \
+# --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \
+# --isInit -c '{"function":"Init","Args":[]}'
+
+peer chaincode instantiate -o orderer.example.com:7050 \
+--tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
+-C supplierfarmerchannel -n farmersupplier \
+-c '{"Args":["init"]}' -P "OR ('Org1MSP.member','Org2MSP.member')" -v 1.0
 
 sleep 3
 echo "==============================================================="
@@ -24,12 +29,12 @@ peer chaincode invoke -o orderer.example.com:7050 \
 --ordererTLSHostnameOverride orderer.example.com \
 --tls true \
 --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 --peerAddresses peer0.org1.example.com:7051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --peerAddresses peer0.org2.example.com:9051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \
--c '{"function":"initSupplier","Args":["xGod666","Earth","12345678","A1!", "100000"]}'
+-c '{"Args":["initSupplier","xGod666","Earth","12345678","A1!", "100000"]}'
 
 sleep 3
 echo "==============================================================="
@@ -39,7 +44,7 @@ peer chaincode invoke -o orderer.example.com:7050 \
 --ordererTLSHostnameOverride orderer.example.com \
 --tls true \
 --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 --peerAddresses peer0.org1.example.com:7051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --peerAddresses peer0.org2.example.com:9051 \
@@ -54,7 +59,7 @@ peer chaincode invoke -o orderer.example.com:7050 \
 --ordererTLSHostnameOverride orderer.example.com \
 --tls true \
 --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 --peerAddresses peer0.org1.example.com:7051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --peerAddresses peer0.org2.example.com:9051 \
@@ -69,7 +74,7 @@ peer chaincode invoke -o orderer.example.com:7050 \
 --ordererTLSHostnameOverride orderer.example.com \
 --tls true \
 --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 --peerAddresses peer0.org1.example.com:7051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --peerAddresses peer0.org2.example.com:9051 \
@@ -84,7 +89,7 @@ peer chaincode invoke -o orderer.example.com:7050 \
 --ordererTLSHostnameOverride orderer.example.com \
 --tls true \
 --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 --peerAddresses peer0.org1.example.com:7051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --peerAddresses peer0.org2.example.com:9051 \
@@ -99,7 +104,7 @@ peer chaincode invoke -o orderer.example.com:7050 \
 --ordererTLSHostnameOverride orderer.example.com \
 --tls true \
 --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 --peerAddresses peer0.org1.example.com:7051 \
 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
 --peerAddresses peer0.org2.example.com:9051 \
@@ -111,7 +116,7 @@ echo "==============================================================="
 echo "                          Chaincode Test 8"
 echo "==============================================================="
 peer chaincode query \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 -c '{"Args":["readSupplierData","xGod66612345678"]}'
 
 sleep 3
@@ -119,7 +124,7 @@ echo "==============================================================="
 echo "                          Chaincode Test 9"
 echo "==============================================================="
 peer chaincode query \
---channelID supplierfarmerchannel --name famersupplier \
+--channelID supplierfarmerchannel --name farmersupplier \
 -c '{"Args":["readFarmerData","Farmer112345678"]}'
 
 # sleep 3
@@ -127,7 +132,7 @@ peer chaincode query \
 # echo "                          Chaincode Test 10"
 # echo "==============================================================="
 # peer chaincode query \
-# --channelID supplierfarmerchannel --name famersupplier \
+# --channelID supplierfarmerchannel --name farmersupplier \
 # -c '{"Args":["readFarmerData","Farmer112345678"]}'
 
 # sleep 3
@@ -135,5 +140,5 @@ peer chaincode query \
 # echo "                          Chaincode Test 11"
 # echo "==============================================================="
 # peer chaincode query \
-# --channelID supplierfarmerchannel --name famersupplier \
+# --channelID supplierfarmerchannel --name farmersupplier \
 # -c '{"Args":["readFarmerData","Farmer112345678"]}'

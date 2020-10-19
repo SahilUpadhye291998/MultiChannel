@@ -20,3 +20,7 @@ echo "======================================================"
 echo "==================Update anchor peers for peer0.org3.example.com====================="
 peer channel update -o orderer.example.com:7050 -c suppliercustomerchannel -f ./channel-artifacts/Org3MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 echo "======================================================"
+
+echo "==================channel install for peer0.org1.example.com====================="
+peer chaincode install -n suppliercustomer -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/supplier_customer/node/
+echo "====================================================="

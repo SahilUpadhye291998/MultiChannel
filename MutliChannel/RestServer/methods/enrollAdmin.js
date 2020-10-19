@@ -1,5 +1,5 @@
 const FabricCAServices = require("fabric-ca-client");
-const { Wallets, X509WalletMixin } = require("fabric-network");
+const { FileSystemWallet, X509WalletMixin } = require("fabric-network");
 const fs = require("fs");
 const path = require("path");
 
@@ -9,49 +9,43 @@ async function enrollFarmer() {
     let ccpPath = path.resolve(__dirname, "..", "..", "connection-org1.json");
     let ccpJSON = fs.readFileSync(ccpPath, "utf8");
     let ccp = JSON.parse(ccpJSON);
-    // Create a new CA client for interacting with the CA.
-    const caInfo = ccp.certificateAuthorities["ca.org1.example.com"];
-    const caTLSCACerts = caInfo.tlsCACerts.pem;
-    const ca = new FabricCAServices(
+    let caInfo = ccp.certificateAuthorities["ca.org1.example.com"];
+    let caTLSCACerts = caInfo.tlsCACerts.pem;
+    let ca = new FabricCAServices(
       caInfo.url,
       { trustedRoots: caTLSCACerts, verify: false },
       caInfo.caName
     );
 
     // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = await Wallets.newFileSystemWallet(walletPath);
+    let walletPath = path.join(process.cwd(), "wallet");
+    let wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
     // Check to see if we've already enrolled the admin user.
-    const identity = await wallet.get("admin1");
-    if (identity) {
+    let adminExists = await wallet.exists("adminOrg1");
+    if (adminExists) {
       console.log(
-        'An identity for the admin1 user "admin1" already exists in the wallet'
+        'An identity for the admin user "admin" already exists in the wallet'
       );
       return;
     }
-
     // Enroll the admin user, and import the new identity into the wallet.
-    const enrollment = await ca.enroll({
+    let enrollment = await ca.enroll({
       enrollmentID: "admin",
       enrollmentSecret: "adminpw",
     });
-    const x509Identity = {
-      credentials: {
-        certificate: enrollment.certificate,
-        privateKey: enrollment.key.toBytes(),
-      },
-      mspId: "Org1MSP",
-      type: "X.509",
-    };
-    await wallet.put("admin1", x509Identity);
+    let identityOrg1 = X509WalletMixin.createIdentity(
+      "Org1MSP",
+      enrollment.certificate,
+      enrollment.key.toBytes()
+    );
+    await wallet.import("adminOrg1", identityOrg1);
     console.log(
-      'Successfully enrolled admin1 user "admin1" and imported it into the wallet'
+      'Successfully enrolled adminOrg1 user "adminOrg1" and imported it into the wallet'
     );
   } catch (error) {
-    console.error(`Failed to enroll admin1 user "admin1": ${error}`);
-    process.exit(1);
+    console.error(`Failed to enroll admin user "admin": ${error}`);
   }
 }
 
@@ -61,157 +55,142 @@ async function enrollSupplier() {
     let ccpPath = path.resolve(__dirname, "..", "..", "connection-org2.json");
     let ccpJSON = fs.readFileSync(ccpPath, "utf8");
     let ccp = JSON.parse(ccpJSON);
-    // Create a new CA client for interacting with the CA.
-    const caInfo = ccp.certificateAuthorities["ca.org2.example.com"];
-    const caTLSCACerts = caInfo.tlsCACerts.pem;
-    const ca = new FabricCAServices(
+    let caInfo = ccp.certificateAuthorities["ca.org2.example.com"];
+    let caTLSCACerts = caInfo.tlsCACerts.pem;
+    let ca = new FabricCAServices(
       caInfo.url,
       { trustedRoots: caTLSCACerts, verify: false },
       caInfo.caName
     );
 
     // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = await Wallets.newFileSystemWallet(walletPath);
+    let walletPath = path.join(process.cwd(), "wallet");
+    let wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
     // Check to see if we've already enrolled the admin user.
-    const identity = await wallet.get("admin2");
-    if (identity) {
+    let adminExists = await wallet.exists("adminOrg2");
+    if (adminExists) {
       console.log(
-        'An identity for the admin2 user "admin2" already exists in the wallet'
+        'An identity for the admin user "admin" already exists in the wallet'
       );
       return;
     }
-
     // Enroll the admin user, and import the new identity into the wallet.
-    const enrollment = await ca.enroll({
+    let enrollment = await ca.enroll({
       enrollmentID: "admin",
       enrollmentSecret: "adminpw",
     });
-    const x509Identity = {
-      credentials: {
-        certificate: enrollment.certificate,
-        privateKey: enrollment.key.toBytes(),
-      },
-      mspId: "Org2MSP",
-      type: "X.509",
-    };
-    await wallet.put("admin2", x509Identity);
+    let identityOrg2 = X509WalletMixin.createIdentity(
+      "Org2MSP",
+      enrollment.certificate,
+      enrollment.key.toBytes()
+    );
+    await wallet.import("adminOrg2", identityOrg2);
     console.log(
-      'Successfully enrolled admin2 user "admin2" and imported it into the wallet'
+      'Successfully enrolled adminOrg2 user "adminOrg2" and imported it into the wallet'
     );
   } catch (error) {
-    console.error(`Failed to enroll admin2 user "admin2": ${error}`);
-    process.exit(1);
+    console.error(`Failed to enroll admin user "admin": ${error}`);
   }
 }
+
 async function enrollCustomer() {
   try {
     // Create a new CA client for interacting with the CA.
     let ccpPath = path.resolve(__dirname, "..", "..", "connection-org3.json");
     let ccpJSON = fs.readFileSync(ccpPath, "utf8");
     let ccp = JSON.parse(ccpJSON);
-    // Create a new CA client for interacting with the CA.
-    const caInfo = ccp.certificateAuthorities["ca.org3.example.com"];
-    const caTLSCACerts = caInfo.tlsCACerts.pem;
-    const ca = new FabricCAServices(
+    let caInfo = ccp.certificateAuthorities["ca.org3.example.com"];
+    let caTLSCACerts = caInfo.tlsCACerts.pem;
+    let ca = new FabricCAServices(
       caInfo.url,
       { trustedRoots: caTLSCACerts, verify: false },
       caInfo.caName
     );
 
     // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = await Wallets.newFileSystemWallet(walletPath);
+    let walletPath = path.join(process.cwd(), "wallet");
+    let wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
     // Check to see if we've already enrolled the admin user.
-    const identity = await wallet.get("admin3");
-    if (identity) {
+    let adminExists = await wallet.exists("adminOrg3");
+    if (adminExists) {
       console.log(
-        'An identity for the admin3 user "admin3" already exists in the wallet'
+        'An identity for the admin user "admin" already exists in the wallet'
       );
       return;
     }
-
     // Enroll the admin user, and import the new identity into the wallet.
-    const enrollment = await ca.enroll({
+    let enrollment = await ca.enroll({
       enrollmentID: "admin",
       enrollmentSecret: "adminpw",
     });
-    const x509Identity = {
-      credentials: {
-        certificate: enrollment.certificate,
-        privateKey: enrollment.key.toBytes(),
-      },
-      mspId: "Org3MSP",
-      type: "X.509",
-    };
-    await wallet.put("admin3", x509Identity);
+    let identityOrg2 = X509WalletMixin.createIdentity(
+      "Org3MSP",
+      enrollment.certificate,
+      enrollment.key.toBytes()
+    );
+    await wallet.import("adminOrg3", identityOrg2);
     console.log(
-      'Successfully enrolled admin3 user "admin3" and imported it into the wallet'
+      'Successfully enrolled adminOrg3 user "adminOrg3" and imported it into the wallet'
     );
   } catch (error) {
-    console.error(`Failed to enroll admin3 user "admin3": ${error}`);
-    process.exit(1);
+    console.error(`Failed to enroll admin user "admin": ${error}`);
   }
 }
-async function enrollLogistics() {
-  try {
-    // Create a new CA client for interacting with the CA.
-    let ccpPath = path.resolve(__dirname, "..", "..", "connection-org4.json");
-    let ccpJSON = fs.readFileSync(ccpPath, "utf8");
-    let ccp = JSON.parse(ccpJSON);
-    // Create a new CA client for interacting with the CA.
-    const caInfo = ccp.certificateAuthorities["ca.org4.example.com"];
-    const caTLSCACerts = caInfo.tlsCACerts.pem;
-    const ca = new FabricCAServices(
-      caInfo.url,
-      { trustedRoots: caTLSCACerts, verify: false },
-      caInfo.caName
-    );
 
-    // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = await Wallets.newFileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
+// async function enrollLogistics() {
+//   try {
+//     // Create a new CA client for interacting with the CA.
+//     let ccpPath = path.resolve(__dirname, "..", "..", "connection-org4.json");
+//     let ccpJSON = fs.readFileSync(ccpPath, "utf8");
+//     let ccp = JSON.parse(ccpJSON);
+//     let caInfo = ccp.certificateAuthorities["ca.org4.example.com"];
+//     let caTLSCACerts = caInfo.tlsCACerts.pem;
+//     let ca = new FabricCAServices(
+//       caInfo.url,
+//       { trustedRoots: caTLSCACerts, verify: false },
+//       caInfo.caName
+//     );
 
-    // Check to see if we've already enrolled the admin user.
-    const identity = await wallet.get("admin4");
-    if (identity) {
-      console.log(
-        'An identity for the admin4 user "admin4" already exists in the wallet'
-      );
-      return;
-    }
+//     // Create a new file system based wallet for managing identities.
+//     let walletPath = path.join(process.cwd(), "wallet");
+//     let wallet = new FileSystemWallet(walletPath);
+//     console.log(`Wallet path: ${walletPath}`);
 
-    // Enroll the admin user, and import the new identity into the wallet.
-    const enrollment = await ca.enroll({
-      enrollmentID: "admin",
-      enrollmentSecret: "adminpw",
-    });
-    const x509Identity = {
-      credentials: {
-        certificate: enrollment.certificate,
-        privateKey: enrollment.key.toBytes(),
-      },
-      mspId: "Org4MSP",
-      type: "X.509",
-    };
-    await wallet.put("admin4", x509Identity);
-    console.log(
-      'Successfully enrolled admin4 user "admin4" and imported it into the wallet'
-    );
-  } catch (error) {
-    console.error(`Failed to enroll admin4 user "admin4": ${error}`);
-    process.exit(1);
-  }
-}
+//     // Check to see if we've already enrolled the admin user.
+//     let adminExists = await wallet.exists("adminOrg4");
+//     if (adminExists) {
+//       console.log(
+//         'An identity for the admin user "admin" already exists in the wallet'
+//       );
+//       return;
+//     }
+//     // Enroll the admin user, and import the new identity into the wallet.
+//     let enrollment = await ca.enroll({
+//       enrollmentID: "admin",
+//       enrollmentSecret: "adminpw",
+//     });
+//     let identityOrg4 = X509WalletMixin.createIdentity(
+//       "Org4MSP",
+//       enrollment.certificate,
+//       enrollment.key.toBytes()
+//     );
+//     await wallet.import("adminOrg4", identityOrg4);
+//     console.log(
+//       'Successfully enrolled adminOrg4 user "adminOrg4" and imported it into the wallet'
+//     );
+//   } catch (error) {
+//     console.error(`Failed to enroll admin user "admin": ${error}`);
+//   }
+// }
+
 
 module.exports = {
   enrollCustomer,
   enrollSupplier,
-  enrollLogistics,
   enrollFarmer,
+  // enrollLogistics,
 };
