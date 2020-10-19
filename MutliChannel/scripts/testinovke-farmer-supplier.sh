@@ -127,6 +127,22 @@ peer chaincode query \
 --channelID supplierfarmerchannel --name farmersupplier \
 -c '{"Args":["readFarmerData","Farmer112345678"]}'
 
+sleep 3
+echo "==============================================================="
+echo "                          Chaincode Test 8"
+echo "==============================================================="
+peer chaincode query \
+--channelID supplierfarmerchannel --name farmersupplier \
+-c '{"Args":["readSupplierHistory","xGod66612345678"]}'
+
+sleep 3
+echo "==============================================================="
+echo "                          Chaincode Test 9"
+echo "==============================================================="
+peer chaincode query \
+--channelID supplierfarmerchannel --name farmersupplier \
+-c '{"Args":["readFarmerHistory","Farmer112345678"]}'
+
 # sleep 3
 # echo "==============================================================="
 # echo "                          Chaincode Test 10"

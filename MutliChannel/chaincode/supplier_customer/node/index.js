@@ -393,7 +393,6 @@ let ChainCode = class {
         if (isHistory && isHistory === true) {
           jsonRes.TxId = res.value.tx_id;
           jsonRes.Timestamp = res.value.timestamp;
-          jsonRes.IsDelete = res.value.is_delete.toString();
           try {
             jsonRes.Value = JSON.parse(res.value.value.toString("utf8"));
           } catch (err) {

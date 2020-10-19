@@ -1,14 +1,14 @@
 const {
   FileSystemWallet,
   Gateway,
-  X509WalletMixin
+  X509WalletMixin,
 } = require("fabric-network");
 const path = require("path");
 
 const ccpPath = path.resolve(__dirname, "..", "..", "connection-org1.json");
 
 async function registerFarmer(secretFarmerName, userOrg) {
-    try {
+  try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
@@ -33,7 +33,7 @@ async function registerFarmer(secretFarmerName, userOrg) {
     await gateway.connect(ccpPath, {
       wallet,
       identity: "adminOrg1", //TODO: check if we can change this
-      discovery: { enabled: true, asLocalhost: true }
+      discovery: { enabled: true, asLocalhost: true },
     });
     const ca = gateway.getClient().getCertificateAuthority();
     const adminIdentity = gateway.getCurrentIdentity();
@@ -41,13 +41,13 @@ async function registerFarmer(secretFarmerName, userOrg) {
     const secret = await ca.register(
       {
         enrollmentID: `${secretFarmerName}`,
-        role: "client"
+        role: "client",
       },
       adminIdentity
     );
     const enrollment = await ca.enroll({
       enrollmentID: `${secretFarmerName}`,
-      enrollmentSecret: secret
+      enrollmentSecret: secret,
     });
 
     const msp = userOrg.charAt(0).toUpperCase() + userOrg.slice(1) + "MSP";
@@ -92,8 +92,8 @@ async function initFarmer(
       identity: secretUserName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -110,7 +110,7 @@ async function initFarmer(
     );
 
     const json = {
-      message: "Successfully Signed Up"
+      message: "Successfully Signed Up",
     };
 
     await gateway.disconnect();
@@ -118,7 +118,7 @@ async function initFarmer(
   } catch (error) {
     console.error(error);
     const json = {
-      message: "UnSuccessfully in paying the premium"
+      message: "UnSuccessfully in paying the premium",
     };
     console.log("Some error has occured please contact web Master");
   }
@@ -146,16 +146,16 @@ async function readFarmerByOwnerAndPassword(
       identity: secretFarmerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
-    const network = await gateway.getNetwork("mychannel");
+    const network = await gateway.getNetwork("supplierfarmerchannel");
 
-    const contract = await network.getContract("mycc");
+    const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
-      "queryFarmerByOwnerAndPassword",
+      "queryFarmerOrgByOwnerAndPassword",
       companyName,
       companyPassword
     );
@@ -184,16 +184,16 @@ async function readFarmer(secretFarmerName, companyName) {
       identity: secretFarmerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
-    const network = await gateway.getNetwork("mychannel");
+    const network = await gateway.getNetwork("supplierfarmerchannel");
 
-    const contract = await network.getContract("mycc");
+    const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
-      "queryUserByFarmer",
+      "readFarmerData",
       companyName
     );
     return JSON.parse(result.toString());
@@ -220,16 +220,16 @@ async function readFarmerHistory(secretFarmerName, companyName) {
       identity: secretFarmerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
-    const network = await gateway.getNetwork("mychannel");
+    const network = await gateway.getNetwork("supplierfarmerchannel");
 
-    const contract = await network.getContract("mycc");
+    const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
-      "getHistoryForFarmer",
+      "readFarmerHistory",
       companyName
     );
     return JSON.parse(result.toString());
@@ -257,13 +257,13 @@ async function readFarmerSupplierData(secretCustomerName, userName) {
       identity: secretCustomerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
-    const network = await gateway.getNetwork("mychannel");
+    const network = await gateway.getNetwork("supplierfarmerchannel");
 
-    const contract = await network.getContract("mycc");
+    const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
       "readFarmerSupplierData",
@@ -302,13 +302,13 @@ async function addProductFarmerSupplier(
       identity: secretCustomerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
-    const network = await gateway.getNetwork("mychannel");
+    const network = await gateway.getNetwork("supplierfarmerchannel");
 
-    const contract = await network.getContract("mycc");
+    const contract = await network.getContract("farmersupplier");
 
     await contract.submitTransaction(
       "addProductFarmerSupplier",
@@ -320,7 +320,7 @@ async function addProductFarmerSupplier(
     );
 
     const json = {
-      message: "Successfully Signed Up"
+      message: "Successfully Signed Up",
     };
 
     await gateway.disconnect();
@@ -328,7 +328,7 @@ async function addProductFarmerSupplier(
   } catch (error) {
     console.error(error);
     const json = {
-      message: "UnSuccessfully in paying the premium"
+      message: "UnSuccessfully in paying the premium",
     };
     console.log("Some error has occured please contact web Master");
     return json;
@@ -353,18 +353,18 @@ async function addFarmerAmount(secretCustomerName, userName, userAmount) {
       identity: secretCustomerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
-    const network = await gateway.getNetwork("mychannel");
+    const network = await gateway.getNetwork("supplierfarmerchannel");
 
-    const contract = await network.getContract("mycc");
+    const contract = await network.getContract("farmersupplier");
 
     await contract.submitTransaction("addFarmerAmount", userName, userAmount);
 
     const json = {
-      message: "Amount added succedd fully"
+      message: "Amount added succedd fully",
     };
 
     await gateway.disconnect();
@@ -382,5 +382,5 @@ module.exports = {
   readFarmerHistory,
   readFarmerSupplierData,
   addProductFarmerSupplier,
-  addFarmerAmount
+  addFarmerAmount,
 };
