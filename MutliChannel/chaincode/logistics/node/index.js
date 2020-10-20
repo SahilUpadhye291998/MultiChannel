@@ -197,6 +197,29 @@ let ChainCode = class {
     return Buffer.from(JSON.stringify(results));
   }
 
+  async queryLogisticsByOwnerAndPassword(stub, args, thisClass) {
+    //   0
+    // 'bob'
+    if (args.length < 2) {
+      throw new Error("Incorrect number of arguments. Expecting owner name.");
+    }
+
+    let owner = args[0];
+    let password = args[1];
+    let queryString = {};
+    queryString.selector = {};
+    queryString.selector.docType = "logistics";
+    queryString.selector.id = owner;
+    queryString.selector.secret = password;
+    let method = thisClass["getQueryResultForQueryString"];
+    let queryResults = await method(
+      stub,
+      JSON.stringify(queryString),
+      thisClass
+    );
+    return queryResults; //shim.success(queryResults);
+  }
+
   async getQueryResultForQueryString(stub, queryString, thisClass) {
     console.info("- getQueryResultForQueryString queryString:\n" + queryString);
     let resultsIterator = await stub.getQueryResult(queryString);

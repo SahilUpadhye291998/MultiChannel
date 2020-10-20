@@ -210,7 +210,7 @@ async function readLogisticsByOwnerAndPassword(
     const contract = await network.getContract("logistics");
 
     const result = await contract.evaluateTransaction(
-      "queryCustomerByOwnerAndPassword",
+      "queryLogisticsByOwnerAndPassword",
       userName,
       userPassword
     );
@@ -287,15 +287,13 @@ async function addProductLogistics(
   dropLocation,
   pickUpLocation,
   productName,
-  productQuantity,
-  productPrice
+  productQuantity
 ) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
     console.log(walletPath);
-    console.log(productPrice);
-    console.log(productQuantity);
+    console.log(pickUpLocation);
 
     const userExists = await wallet.exists(secretUserName);
     if (!userExists) {
@@ -317,27 +315,24 @@ async function addProductLogistics(
 
     const contract = await network.getContract("logistics");
 
-    try {
-      await contract.submitTransaction(
-        "addProduct",
-        userID,
-        customerID,
-        supplierID,
-        pickUpLocation,
-        dropLocation,
-        productName,
-        productQuantity
-      );
-    } catch (err) {
-      console.log(err);
-    }
+    await contract.submitTransaction(
+      "addProduct",
+      userID,
+      customerID,
+      supplierID,
+      pickUpLocation,
+      dropLocation,
+      productName,
+      productQuantity
+    );
+
     await gateway.disconnect();
 
     const json = {
       status: 200,
       message: "Added Successfully",
     };
-
+    console.log(json);
     return json;
   } catch (error) {
     // console.error(error);
@@ -346,7 +341,7 @@ async function addProductLogistics(
       message: "UnSuccessfully in paying the premium",
     };
     console.log("some errir has occured");
-    throw new Error(json);
+    throw new Error(error);
   }
 }
 
@@ -376,7 +371,11 @@ async function addLogisticsAmount(secretCustomerName, userName, userAmount) {
 
     const contract = await network.getContract("logistics");
 
-    await contract.submitTransaction("addCustomerAmount", userName, userAmount);
+    await contract.submitTransaction(
+      "addLogisticsAmount",
+      userName,
+      userAmount
+    );
 
     const json = {
       message: "Amount added succedd fully",
@@ -396,8 +395,11 @@ async function addLogisticsAmount(secretCustomerName, userName, userAmount) {
 
 module.exports = {
   registerLogistics,
+  initLogistics,
   readLogistics,
   readLogisticsHistory,
   readLogisticsSupplierData,
   readLogisticsByOwnerAndPassword,
+  addLogisticsAmount,
+  addProductLogistics,
 };

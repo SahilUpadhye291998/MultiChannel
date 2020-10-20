@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
       return res.status(500).send(json);
     });
 
-    await admin
+  await admin
     .enrollCustomer()
     .then(() => {
       json.code = 200;
@@ -51,20 +51,19 @@ router.post("/", async (req, res) => {
       return res.status(500).send(json);
     });
 
-    // await admin
-    // .enrollLogistics()
-    // .then(() => {
-    //   json.code = 200;
-    //   json.logisticsMessage = "Logistics Admin enrolled successfully";
-    //   console.log("Logistics is issued");
-    // })
-    // .catch((error) => {
-    //   console.log(error);
-    //   json.code = 500;
-    //   json.userMessage = "Some error has occured";
-    //   return res.status(500).send(json);
-    // });
-
+  await admin
+    .enrollLogistics()
+    .then(() => {
+      json.code = 200;
+      json.logisticsMessage = "Logistics Admin enrolled successfully";
+      console.log("Logistics is issued");
+    })
+    .catch((error) => {
+      console.log(error);
+      json.code = 500;
+      json.userMessage = "Some error has occured";
+      return res.status(500).send(json);
+    });
 
   res.status(200).send(json);
 });

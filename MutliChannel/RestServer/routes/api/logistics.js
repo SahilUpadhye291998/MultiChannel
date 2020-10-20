@@ -6,7 +6,7 @@ const user = require("../../methods/logistics");
 //@route    POST api/Logistics/registerUser
 //@desc     To generate User credentials
 //@access   PUBLIC
-router.post("/registerUser", async (req, res) => {
+router.post("/registerLogistics", async (req, res) => {
   console.log("OK");
   const secretUsername = req.body.secretUsername;
   const userOrg = req.body.orgName;
@@ -194,23 +194,24 @@ router.post("/addProductLogisticsSupplier", (req, res) => {
   const customerName = req.body.customerName;
   const customerMobile = req.body.customerMobile;
   const dropLocation = req.body.dropLocation;
-  const pickUpLocaltion = req.body.pickUpLocaltion;
+  const pickUpLocation = req.body.pickUpLocation;
   const productName = req.body.productName;
   const productQuantity = req.body.productQuantity;
   const json = {};
-  if (parseInt(productPrice) <= 0 || parseInt(productQuantity) <= 0) {
+  if (parseInt(productQuantity) <= 0) {
     return res.status(500).json({ message: "Price or quantity is not valid" });
   }
-
+  console.log(pickUpLocation);
   user
-    .addProductLogisticsSupplier(
+    .addProductLogistics(
       secretUsername,
       userName + userMobile,
       customerName + customerMobile,
       supplierName + supplierMobile,
+      dropLocation,
+      pickUpLocation,
       productName,
-      productQuantity,
-      productPrice
+      productQuantity
     )
     .then((result) => {
       json.code = 200;
