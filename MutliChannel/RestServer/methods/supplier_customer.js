@@ -4,189 +4,185 @@ const {
   X509WalletMixin,
 } = require("fabric-network");
 const path = require("path");
-const { log } = require("util");
 
-const ccpPath = path.resolve(__dirname, "..", "..", "connection-org3.json");
+const ccpPath = path.resolve(__dirname, "..", "..", "connection-org2.json");
 
-async function registerCustomer(secretCustomerName, userOrg) {
-  try {
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = new FileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
-
-    const userExists = await wallet.exists(secretCustomerName);
-    if (userExists) {
-      console.log(
-        `An identity for the user ${secretCustomerName} already exists in the wallet`
-      );
-      return;
-    }
-    const adminExists = await wallet.exists("adminOrg3");
-    if (!adminExists) {
-      console.log(
-        'An identity for the admin user "adminOrg3" does not exist in the wallet'
-      );
-      console.log("Run the enrollAdmin.js application before retrying");
-      return;
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(ccpPath, {
-      wallet,
-      identity: "adminOrg3", //TODO: check if we can change this
-      discovery: { enabled: true, asLocalhost: true },
-    });
-    const ca = gateway.getClient().getCertificateAuthority();
-    const adminIdentity = gateway.getCurrentIdentity();
-
-    const secret = await ca.register(
-      {
-        enrollmentID: `${secretCustomerName}`,
-        role: "client",
-      },
-      adminIdentity
-    );
-    const enrollment = await ca.enroll({
-      enrollmentID: `${secretCustomerName}`,
-      enrollmentSecret: secret,
-    });
-
-    const msp = userOrg.charAt(0).toUpperCase() + userOrg.slice(1) + "MSP";
-    const userIdentity = X509WalletMixin.createIdentity(
-      `${msp}`,
-      enrollment.certificate,
-      enrollment.key.toBytes()
-    );
-
-    await wallet.import(secretCustomerName, userIdentity);
-    console.log(
-      'Successfully registered and enrolled admin user "user1" and imported it into the wallet'
-    );
-  } catch (error) {
-    console.error(error);
-    console.log("Some error has occured please contact web Master");
-  }
-}
-
-async function readCustomer(secretCustomerName, userName) {
-  try {
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = new FileSystemWallet(walletPath);
-    console.log(walletPath);
-    console.log(userName);
-    const userExists = await wallet.exists(secretCustomerName);
-    if (!userExists) {
-      console.log("Please check this user does not exists");
-      return;
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(ccpPath, {
-      wallet,
-      identity: secretCustomerName,
-      discovery: {
-        enabled: true,
-        asLocalhost: true,
-      },
-    });
-
-    const network = await gateway.getNetwork("suppliercustomerchannel");
-
-    const contract = await network.getContract("suppliercustomer");
-
-    const result = await contract.evaluateTransaction(
-      "readCustomerData",
-      userName
-    );
-    console.log(result.toString());
-    return JSON.parse(result.toString());
-  } catch (error) {
-    console.error(error);
-    console.log("Some error has occured please contact web Master");
-  }
-}
-
-async function readCustomerSupplierData(secretCustomerName, userName) {
-  try {
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = new FileSystemWallet(walletPath);
-    console.log(walletPath);
-
-    const userExists = await wallet.exists(secretCustomerName);
-    if (!userExists) {
-      console.log("Please check this user does not exists");
-      return;
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(ccpPath, {
-      wallet,
-      identity: secretCustomerName,
-      discovery: {
-        enabled: true,
-        asLocalhost: true,
-      },
-    });
-
-    const network = await gateway.getNetwork("suppliercustomerchannel");
-
-    const contract = await network.getContract("suppliercustomer");
-
-    const result = await contract.evaluateTransaction(
-      "readCustomerSupplierData",
-      userName
-    );
-    return JSON.parse(result.toString());
-  } catch (error) {
-    console.log("Some error has occured please contact web Master");
-  }
-}
-
-async function readCustomerHistory(secretCustomerName, userName) {
-  try {
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = new FileSystemWallet(walletPath);
-
-    const userExists = await wallet.exists(secretCustomerName);
-    if (!userExists) {
-      console.log("Please check this user does not exists");
-      return;
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(ccpPath, {
-      wallet,
-      identity: secretCustomerName,
-      discovery: {
-        enabled: true,
-        asLocalhost: true,
-      },
-    });
-
-    const network = await gateway.getNetwork("suppliercustomerchannel");
-
-    const contract = await network.getContract("suppliercustomer");
-
-    const result = await contract.evaluateTransaction(
-      "readCustomerHistory",
-      userName
-    );
-    console.log(result);
-    return JSON.parse(result.toString());
-  } catch (error) {
-    console.log("Some error has occured please contact web Master");
-  }
-}
-
-async function readCustomerByOwnerAndPassword(
-  secretCustomerName,
-  userName,
-  userPassword
+async function initSupplier_Customer(
+  secretUserName,
+  companyName,
+  companyAddress,
+  companyMobile,
+  companySecret,
+  companyAmount
 ) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
     console.log(walletPath);
+
+    const userExists = await wallet.exists(secretUserName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretUserName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    await contract.submitTransaction(
+      "initSupplier",
+      companyName,
+      companyAddress,
+      companyMobile,
+      companySecret,
+      companyAmount
+    );
+
+    const json = {
+      message: "Successfully Signed Up",
+    };
+
+    await gateway.disconnect();
+    return json;
+  } catch (error) {
+    console.error(error);
+    const json = {
+      message: "UnSuccessfully in paying the premium",
+    };
+    console.log("Some error has occured please contact web Master");
+  }
+}
+
+async function readSupplierByOwnerAndPassword_Customer(
+  secretSupplierName,
+  companyName,
+  companyPassword
+) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
+
+    const userExists = await wallet.exists(secretSupplierName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretSupplierName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    const result = await contract.evaluateTransaction(
+      "querySupplierOrgByOwnerAndPassword",
+      companyName,
+      companyPassword
+    );
+
+    return JSON.parse(result.toString());
+  } catch (error) {
+    console.log("Some error has occured please contact web Master");
+  }
+}
+
+async function readSupplier_Customer(secretSupplierName, companyName) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
+
+    const userExists = await wallet.exists(secretSupplierName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretSupplierName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    const result = await contract.evaluateTransaction(
+      "readSupplierData",
+      companyName
+    );
+    return JSON.parse(result.toString());
+  } catch (error) {
+    console.log("Some error has occured please contact web Master");
+  }
+}
+
+async function readSupplierHistory_Customer(secretSupplierName, companyName) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
+
+    const userExists = await wallet.exists(secretSupplierName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretSupplierName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    const result = await contract.evaluateTransaction(
+      "readSupplierHistory",
+      companyName
+    );
+    return JSON.parse(result.toString());
+  } catch (error) {
+    console.log("Some error has occured please contact web Master");
+  }
+}
+
+async function readSupplierCustomerData_Customer(secretCustomerName, userName) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
     console.log(userName);
 
     const userExists = await wallet.exists(secretCustomerName);
@@ -210,23 +206,173 @@ async function readCustomerByOwnerAndPassword(
     const contract = await network.getContract("suppliercustomer");
 
     const result = await contract.evaluateTransaction(
-      "queryCustomerByOwnerAndPassword",
-      userName,
-      userPassword
+      "readSupplierCustomerData",
+      userName
     );
-
     return JSON.parse(result.toString());
   } catch (error) {
     console.log("Some error has occured please contact web Master");
   }
 }
 
-async function initCustomer(
+async function readSupplierFarmerData_Customer(secretCustomerName, userName) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
+
+    const userExists = await wallet.exists(secretCustomerName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretCustomerName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    const result = await contract.evaluateTransaction(
+      "readSupplierFarmerData",
+      userName
+    );
+    return JSON.parse(result.toString());
+  } catch (error) {
+    console.log("Some error has occured please contact web Master");
+  }
+}
+
+async function addProductCustomerSupplier_Customer(
+  secretSupplierName,
+  customerID,
+  supplierID,
+  productName,
+  productQuantity,
+  productPrice
+) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
+    console.log(secretSupplierName);
+
+    const userExists = await wallet.exists(secretSupplierName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretSupplierName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    await contract.submitTransaction(
+      "addProductCustomerSupplier",
+      customerID,
+      supplierID,
+      productName,
+      productQuantity,
+      productPrice
+    );
+
+    const json = {
+      message: "Added Successfully",
+    };
+
+    await gateway.disconnect();
+    return json;
+  } catch (error) {
+    console.error(error);
+    const json = {
+      message: "UnSuccessfully in paying the premium",
+    };
+    console.log("Some error has occured please contact web Master");
+    return json;
+  }
+}
+
+async function addProductFarmerSupplier_Customer(
+  secretSupplierName,
+  farmerID,
+  supplierID,
+  productName,
+  productQuantity,
+  productPrice
+) {
+  try {
+    const walletPath = path.join(process.cwd(), "wallet");
+    const wallet = new FileSystemWallet(walletPath);
+    console.log(walletPath);
+    console.log(farmerID);
+    console.log(supplierID);
+
+    const userExists = await wallet.exists(secretSupplierName);
+    if (!userExists) {
+      console.log("Please check this user does not exists");
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: secretSupplierName,
+      discovery: {
+        enabled: true,
+        asLocalhost: true,
+      },
+    });
+
+    const network = await gateway.getNetwork("suppliercustomerchannel");
+
+    const contract = await network.getContract("suppliercustomer");
+
+    await contract.submitTransaction(
+      "addProductFarmerSupplier",
+      farmerID,
+      supplierID,
+      productName,
+      productQuantity,
+      productPrice
+    );
+
+    const json = {
+      message: "Added Successfully",
+    };
+
+    await gateway.disconnect();
+    return json;
+  } catch (error) {
+    console.error(error);
+    const json = {
+      message: "UnSuccessfully in paying the premium",
+    };
+    console.log("Some error has occured please contact web Master");
+    return json;
+  }
+}
+
+async function addSupplierAmount_Customer(
   secretCustomerName,
   userName,
-  userAddress,
-  userMobile,
-  userSecret,
   userAmount
 ) {
   try {
@@ -254,124 +400,7 @@ async function initCustomer(
 
     const contract = await network.getContract("suppliercustomer");
 
-    await contract.submitTransaction(
-      "initCustomer",
-      userName,
-      userAddress,
-      userMobile,
-      userSecret,
-      userAmount
-    );
-
-    const json = {
-      message: "Successfully Signed Up",
-    };
-
-    await gateway.disconnect();
-    return json;
-  } catch (error) {
-    console.error(error);
-    const json = {
-      message: "UnSuccessfully in paying the premium",
-    };
-    console.log("Some error has occured please contact web Master");
-    return json;
-  }
-}
-
-async function addProductCustomerSupplier(
-  secretUserName,
-  customerID,
-  supplierID,
-  productName,
-  productQuantity,
-  productPrice
-) {
-  try {
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = new FileSystemWallet(walletPath);
-    console.log(walletPath);
-    console.log(productPrice);
-    console.log(productQuantity);
-
-    const userExists = await wallet.exists(secretUserName);
-    if (!userExists) {
-      console.log("Please check this user does not exists");
-      return;
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(ccpPath, {
-      wallet,
-      identity: secretUserName,
-      discovery: {
-        enabled: true,
-        asLocalhost: true,
-      },
-    });
-
-    const network = await gateway.getNetwork("suppliercustomerchannel");
-
-    const contract = await network.getContract("suppliercustomer");
-
-    try {
-      await contract.submitTransaction(
-        "addProductCustomerSupplier",
-        customerID,
-        supplierID,
-        productName,
-        productQuantity,
-        productPrice
-      );
-    } catch (err) {
-      console.log(err);
-    }
-    await gateway.disconnect();
-
-    const json = {
-      status: 200,
-      message: "Added Successfully",
-    };
-
-    return json;
-  } catch (error) {
-    // console.error(error);
-    const json = {
-      status: 500,
-      message: "UnSuccessfully in paying the premium",
-    };
-    console.log("some errir has occured");
-    throw new Error(json);
-  }
-}
-
-async function addCustomerAmount(secretCustomerName, userName, userAmount) {
-  try {
-    const walletPath = path.join(process.cwd(), "wallet");
-    const wallet = new FileSystemWallet(walletPath);
-    console.log(walletPath);
-
-    const userExists = await wallet.exists(secretCustomerName);
-    if (!userExists) {
-      console.log("Please check this user does not exists");
-      return;
-    }
-
-    const gateway = new Gateway();
-    await gateway.connect(ccpPath, {
-      wallet,
-      identity: secretCustomerName,
-      discovery: {
-        enabled: true,
-        asLocalhost: true,
-      },
-    });
-
-    const network = await gateway.getNetwork("suppliercustomerchannel");
-
-    const contract = await network.getContract("suppliercustomer");
-
-    await contract.submitTransaction("addCustomerAmount", userName, userAmount);
+    await contract.submitTransaction("addSupplierAmount", userName, userAmount);
 
     const json = {
       message: "Amount added succedd fully",
@@ -380,22 +409,18 @@ async function addCustomerAmount(secretCustomerName, userName, userAmount) {
     await gateway.disconnect();
     return json;
   } catch (error) {
-    console.error(error);
-    const json = {
-      message: "UnSuccessfully in paying the premium",
-    };
     console.log("Some error has occured please contact web Master");
-    return json;
   }
 }
 
 module.exports = {
-  registerCustomer,
-  readCustomer,
-  readCustomerHistory,
-  readCustomerSupplierData,
-  readCustomerByOwnerAndPassword,
-  initCustomer,
-  addProductCustomerSupplier,
-  addCustomerAmount,
+  initSupplier_Customer,
+  readSupplierByOwnerAndPassword_Customer,
+  readSupplier_Customer,
+  readSupplierCustomerData_Customer,
+  readSupplierFarmerData_Customer,
+  readSupplierHistory_Customer,
+  addProductCustomerSupplier_Customer,
+  addProductFarmerSupplier_Customer,
+  addSupplierAmount_Customer,
 };

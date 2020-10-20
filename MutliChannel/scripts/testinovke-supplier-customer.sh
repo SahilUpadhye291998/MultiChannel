@@ -131,3 +131,19 @@ echo "==============================================================="
 peer chaincode query \
 --channelID suppliercustomerchannel --name suppliercustomer \
 -c '{"Args":["readCustomerData","Customer12345678"]}'
+
+sleep 3
+echo "==============================================================="
+echo "                          Chaincode Test 8"
+echo "==============================================================="
+peer chaincode query \
+--channelID suppliercustomerchannel --name suppliercustomer \
+-c '{"Args":["readSupplierHistory","xGod66612345678"]}'
+
+sleep 3
+echo "==============================================================="
+echo "                          Chaincode Test 9"
+echo "==============================================================="
+peer chaincode query \
+--channelID suppliercustomerchannel --name suppliercustomer \
+-c '{"Args":["readCustomerHistory","Customer12345678"]}'

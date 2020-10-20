@@ -183,6 +183,20 @@ let ChainCode = class {
     await stub.putState(logisticsID, Buffer.from(JSON.stringify(logistics)));
   }
 
+  async readLogisticsHistory(stub, args, thisClass) {
+    if (args.length < 1) {
+      throw new Error("Incorrect number of arguments. Expecting 1");
+    }
+    let logisticsID = args[0];
+    console.info("- start getHistoryForMarble: %s\n", logisticsID);
+
+    let resultsIterator = await stub.getHistoryForKey(logisticsID);
+    let method = thisClass["getAllResults"];
+    let results = await method(resultsIterator, true);
+
+    return Buffer.from(JSON.stringify(results));
+  }
+
   async getQueryResultForQueryString(stub, queryString, thisClass) {
     console.info("- getQueryResultForQueryString queryString:\n" + queryString);
     let resultsIterator = await stub.getQueryResult(queryString);

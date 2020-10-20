@@ -327,6 +327,34 @@ let ChainCode = class {
     await stub.putState(supplierID, Buffer.from(JSON.stringify(supplier)));
   }
 
+  async readSupplierHistory(stub, args, thisClass) {
+    if (args.length < 1) {
+      throw new Error("Incorrect number of arguments. Expecting 1");
+    }
+    let supplierID = args[0];
+    console.info("- start getHistoryForMarble: %s\n", supplierID);
+
+    let resultsIterator = await stub.getHistoryForKey(supplierID);
+    let method = thisClass["getAllResults"];
+    let results = await method(resultsIterator, true);
+
+    return Buffer.from(JSON.stringify(results));
+  }
+
+  async readCustomerHistory(stub, args, thisClass) {
+    if (args.length < 1) {
+      throw new Error("Incorrect number of arguments. Expecting 1");
+    }
+    let customerID = args[0];
+    console.info("- start getHistoryForMarble: %s\n", customerID);
+
+    let resultsIterator = await stub.getHistoryForKey(customerID);
+    let method = thisClass["getAllResults"];
+    let results = await method(resultsIterator, true);
+
+    return Buffer.from(JSON.stringify(results));
+  }
+
   async queryCustomerByOwnerAndPassword(stub, args, thisClass) {
     //   0
     // 'bob'

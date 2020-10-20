@@ -1,7 +1,7 @@
 const {
   FileSystemWallet,
   Gateway,
-  X509WalletMixin
+  X509WalletMixin,
 } = require("fabric-network");
 const path = require("path");
 
@@ -33,7 +33,7 @@ async function registerSupplier(secretSupplierName, companyOrg) {
     await gateway.connect(ccpPath, {
       wallet,
       identity: "adminOrg2", //TODO: check if we can change this
-      discovery: { enabled: true, asLocalhost: true }
+      discovery: { enabled: true, asLocalhost: true },
     });
     const ca = gateway.getClient().getCertificateAuthority();
     const adminIdentity = gateway.getCurrentIdentity();
@@ -41,13 +41,13 @@ async function registerSupplier(secretSupplierName, companyOrg) {
     const secret = await ca.register(
       {
         enrollmentID: `${secretSupplierName}`,
-        role: "client"
+        role: "client",
       },
       adminIdentity
     );
     const enrollment = await ca.enroll({
       enrollmentID: `${secretSupplierName}`,
-      enrollmentSecret: secret
+      enrollmentSecret: secret,
     });
 
     const msp =
@@ -93,8 +93,8 @@ async function initSupplier(
       identity: secretUserName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -111,7 +111,7 @@ async function initSupplier(
     );
 
     const json = {
-      message: "Successfully Signed Up"
+      message: "Successfully Signed Up",
     };
 
     await gateway.disconnect();
@@ -119,7 +119,7 @@ async function initSupplier(
   } catch (error) {
     console.error(error);
     const json = {
-      message: "UnSuccessfully in paying the premium"
+      message: "UnSuccessfully in paying the premium",
     };
     console.log("Some error has occured please contact web Master");
   }
@@ -150,8 +150,8 @@ async function initSupplierCustomer(
       identity: secretUserName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("suppliercustomerchannel");
@@ -168,7 +168,7 @@ async function initSupplierCustomer(
     );
 
     const json = {
-      message: "Successfully Signed Up"
+      message: "Successfully Signed Up",
     };
 
     await gateway.disconnect();
@@ -176,7 +176,7 @@ async function initSupplierCustomer(
   } catch (error) {
     console.error(error);
     const json = {
-      message: "UnSuccessfully in paying the premium"
+      message: "UnSuccessfully in paying the premium",
     };
     console.log("Some error has occured please contact web Master");
   }
@@ -204,8 +204,8 @@ async function readSupplierByOwnerAndPassword(
       identity: secretSupplierName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -242,8 +242,8 @@ async function readSupplier(secretSupplierName, companyName) {
       identity: secretSupplierName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -278,8 +278,8 @@ async function readSupplierHistory(secretSupplierName, companyName) {
       identity: secretSupplierName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -315,8 +315,8 @@ async function readSupplierCustomerData(secretCustomerName, userName) {
       identity: secretCustomerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -351,8 +351,8 @@ async function readSupplierFarmerData(secretCustomerName, userName) {
       identity: secretCustomerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -395,8 +395,8 @@ async function addProductCustomerSupplier(
       identity: secretSupplierName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -413,7 +413,7 @@ async function addProductCustomerSupplier(
     );
 
     const json = {
-      message: "Added Successfully"
+      message: "Added Successfully",
     };
 
     await gateway.disconnect();
@@ -421,7 +421,7 @@ async function addProductCustomerSupplier(
   } catch (error) {
     console.error(error);
     const json = {
-      message: "UnSuccessfully in paying the premium"
+      message: "UnSuccessfully in paying the premium",
     };
     console.log("Some error has occured please contact web Master");
     return json;
@@ -455,8 +455,8 @@ async function addProductFarmerSupplier(
       identity: secretSupplierName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -473,7 +473,7 @@ async function addProductFarmerSupplier(
     );
 
     const json = {
-      message: "Added Successfully"
+      message: "Added Successfully",
     };
 
     await gateway.disconnect();
@@ -481,7 +481,7 @@ async function addProductFarmerSupplier(
   } catch (error) {
     console.error(error);
     const json = {
-      message: "UnSuccessfully in paying the premium"
+      message: "UnSuccessfully in paying the premium",
     };
     console.log("Some error has occured please contact web Master");
     return json;
@@ -506,8 +506,8 @@ async function addSupplierAmount(secretCustomerName, userName, userAmount) {
       identity: secretCustomerName,
       discovery: {
         enabled: true,
-        asLocalhost: true
-      }
+        asLocalhost: true,
+      },
     });
 
     const network = await gateway.getNetwork("supplierfarmerchannel");
@@ -517,7 +517,7 @@ async function addSupplierAmount(secretCustomerName, userName, userAmount) {
     await contract.submitTransaction("addSupplierAmount", userName, userAmount);
 
     const json = {
-      message: "Amount added succedd fully"
+      message: "Amount added succedd fully",
     };
 
     await gateway.disconnect();
@@ -529,7 +529,6 @@ async function addSupplierAmount(secretCustomerName, userName, userAmount) {
 module.exports = {
   registerSupplier,
   initSupplier,
-  initSupplierCustomer,
   readSupplierByOwnerAndPassword,
   readSupplier,
   readSupplierCustomerData,
@@ -537,5 +536,5 @@ module.exports = {
   readSupplierHistory,
   addProductCustomerSupplier,
   addProductFarmerSupplier,
-  addSupplierAmount
+  addSupplierAmount,
 };

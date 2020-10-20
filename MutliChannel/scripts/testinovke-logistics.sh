@@ -59,3 +59,11 @@ echo "==============================================================="
 peer chaincode query \
 --channelID logisticschannel --name logistics \
 -c '{"Args":["readLogisticsData","Logistics12345678"]}'
+
+sleep 3
+echo "==============================================================="
+echo "                          Chaincode Test"
+echo "==============================================================="
+peer chaincode query \
+--channelID logisticschannel --name logistics \
+-c '{"Args":["readLogisticsHistory","Logistics12345678"]}'

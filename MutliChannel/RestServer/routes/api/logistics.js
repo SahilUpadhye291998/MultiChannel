@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const user = require("../../methods/customer");
+const user = require("../../methods/logistics");
 
-//@route    POST api/customer/registerUser
+//@route    POST api/Logistics/registerUser
 //@desc     To generate User credentials
 //@access   PUBLIC
 router.post("/registerUser", async (req, res) => {
@@ -12,7 +12,7 @@ router.post("/registerUser", async (req, res) => {
   const userOrg = req.body.orgName;
   const json = {};
   user
-    .registerCustomer(secretUsername, userOrg)
+    .registerLogistics(secretUsername, userOrg)
     .then(() => {
       json.code = 200;
       json.Message = "User enrolled successfully";
@@ -26,7 +26,7 @@ router.post("/registerUser", async (req, res) => {
     });
 });
 
-//@route    POST api/customer/login
+//@route    POST api/Logistics/login
 //@desc     Login User with credentials from Blockchain
 //@access   PUBLIC
 router.post("/login", (req, res) => {
@@ -37,7 +37,7 @@ router.post("/login", (req, res) => {
   const userPassword = req.body.userSecret;
   const json = {};
   user
-    .readCustomerByOwnerAndPassword(
+    .readLogisticsByOwnerAndPassword(
       secretUsername,
       userName + userMobile,
       userPassword
@@ -53,7 +53,7 @@ router.post("/login", (req, res) => {
     });
 });
 
-//@route    POST api/customer/signup
+//@route    POST api/Logistics/signup
 //@desc     Signup User credentials from Blockchain
 //@access   PUBLIC
 router.post("/signup", (req, res) => {
@@ -66,7 +66,7 @@ router.post("/signup", (req, res) => {
   const userAmount = req.body.userAmount;
   const json = {};
   user
-    .initCustomer(
+    .initLogistics(
       secretUsername,
       userName,
       userAddress,
@@ -85,7 +85,7 @@ router.post("/signup", (req, res) => {
     });
 });
 
-//@route    POST api/customer/getUser
+//@route    POST api/Logistics/getUser
 //@desc     To read the user from the database
 //@access   PUBLIC
 router.post("/getUser", (req, res) => {
@@ -95,7 +95,7 @@ router.post("/getUser", (req, res) => {
   const userMobile = req.body.userMobile;
   const json = {};
   user
-    .readCustomer(secretUsername, userName + userMobile)
+    .readLogistics(secretUsername, userName + userMobile)
     .then((result) => {
       res.status(200).send(result);
     })
@@ -107,17 +107,17 @@ router.post("/getUser", (req, res) => {
     });
 });
 
-//@route    POST api/customer/getUser
+//@route    POST api/Logistics/getUser
 //@desc     To read the user from the database
 //@access   PUBLIC
-router.post("/getCustomerSupplierData", (req, res) => {
+router.post("/getLogisticsSupplierData", (req, res) => {
   console.log(req.body.secretUsername);
   const secretUsername = req.body.secretUsername;
   const userName = req.body.userName;
   const userMobile = req.body.userMobile;
   const json = {};
   user
-    .readCustomerSupplierData(secretUsername, userName + userMobile)
+    .readLogisticsSupplierData(secretUsername, userName + userMobile)
     .then((result) => {
       res.status(200).send(result);
     })
@@ -129,7 +129,7 @@ router.post("/getCustomerSupplierData", (req, res) => {
     });
 });
 
-//@route    POST api/customer/getUserHistory
+//@route    POST api/Logistics/getUserHistory
 //@desc     Transaction history of the user
 //@access   PUBLIC
 router.post("/getUserHistory", (req, res) => {
@@ -139,7 +139,7 @@ router.post("/getUserHistory", (req, res) => {
   const userMobile = req.body.userMobile;
   const json = {};
   user
-    .readCustomerHistory(secretUsername, userName + userMobile)
+    .readLogisticsHistory(secretUsername, userName + userMobile)
     .then((result) => {
       json.code = 200;
       json.data = result;
@@ -153,10 +153,10 @@ router.post("/getUserHistory", (req, res) => {
     });
 });
 
-//@route    POST api/customer/getUserHistory
+//@route    POST api/Logistics/getUserHistory
 //@desc     Transaction history of the user
 //@access   PUBLIC
-router.post("/addCustomerAmount", (req, res) => {
+router.post("/addLogisticsAmount", (req, res) => {
   console.log(req.body.secretUsername);
   const secretUsername = req.body.secretUsername;
   const userName = req.body.userName;
@@ -167,7 +167,7 @@ router.post("/addCustomerAmount", (req, res) => {
     return res.status(500).json({ message: "Amount is not valid" });
   }
   user
-    .addCustomerAmount(secretUsername, userName + userMobile, userAmount)
+    .addLogisticsAmount(secretUsername, userName + userMobile, userAmount)
     .then((result) => {
       json.code = 200;
       json.data = result;
@@ -181,28 +181,32 @@ router.post("/addCustomerAmount", (req, res) => {
     });
 });
 
-//@route    POST api/customer/addProductCustomerSupplier
+//@route    POST api/Logistics/addProductLogisticsSupplier
 //@desc     Transaction history of the user
 //@access   PUBLIC
-router.post("/addProductCustomerSupplier", (req, res) => {
+router.post("/addProductLogisticsSupplier", (req, res) => {
   console.log(req.body.secretUsername);
   const secretUsername = req.body.secretUsername;
   const userName = req.body.userName;
   const userMobile = req.body.userMobile;
   const supplierName = req.body.supplierName;
   const supplierMobile = req.body.supplierMobile;
+  const customerName = req.body.customerName;
+  const customerMobile = req.body.customerMobile;
+  const dropLocation = req.body.dropLocation;
+  const pickUpLocaltion = req.body.pickUpLocaltion;
   const productName = req.body.productName;
   const productQuantity = req.body.productQuantity;
-  const productPrice = req.body.productPrice;
   const json = {};
   if (parseInt(productPrice) <= 0 || parseInt(productQuantity) <= 0) {
     return res.status(500).json({ message: "Price or quantity is not valid" });
   }
 
   user
-    .addProductCustomerSupplier(
+    .addProductLogisticsSupplier(
       secretUsername,
       userName + userMobile,
+      customerName + customerMobile,
       supplierName + supplierMobile,
       productName,
       productQuantity,

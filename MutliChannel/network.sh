@@ -219,11 +219,11 @@ function networkUp(){
       echo "==================================================================="
       docker exec cli /bin/sh -c "scripts/network_farmer_supplier.sh"
       docker exec cli /bin/sh -c "scripts/network_supplier_farmer.sh"
-      # sleep 10
-      # docker exec cli /bin/sh -c "scripts/network_customer_supplier.sh"
-      # docker exec cli /bin/sh -c "scripts/network_supplier_customer.sh"
-      # sleep 10
-      # docker exec cli /bin/sh -c "scripts/network_logistics.sh"
+      sleep 10
+      docker exec cli /bin/sh -c "scripts/network_customer_supplier.sh"
+      docker exec cli /bin/sh -c "scripts/network_supplier_customer.sh"
+      sleep 10
+      docker exec cli /bin/sh -c "scripts/network_logistics.sh"
       echo "==================================================================="
       echo "==================================================================="
       echo "                           Invokeing chaincode                     "
@@ -231,10 +231,10 @@ function networkUp(){
       echo "==================================================================="
       sleep 10
       docker exec cli /bin/sh -c "scripts/testinovke-farmer-supplier.sh"
-      # sleep 10
-      # docker exec cli /bin/sh -c "scripts/testinovke-supplier-customer.sh"
-      # sleep 10
-      # docker exec cli /bin/sh -c "scripts/testinovke-logistics.sh"
+      sleep 10
+      docker exec cli /bin/sh -c "scripts/testinovke-supplier-customer.sh"
+      sleep 10
+      docker exec cli /bin/sh -c "scripts/testinovke-logistics.sh"
 
     else
       docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml up -d

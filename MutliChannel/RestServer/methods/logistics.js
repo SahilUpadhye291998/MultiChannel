@@ -6,9 +6,9 @@ const {
 const path = require("path");
 const { log } = require("util");
 
-const ccpPath = path.resolve(__dirname, "..", "..", "connection-org3.json");
+const ccpPath = path.resolve(__dirname, "..", "..", "connection-org4.json");
 
-async function registerCustomer(secretCustomerName, userOrg) {
+async function registerLogistics(secretCustomerName, userOrg) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
@@ -21,10 +21,10 @@ async function registerCustomer(secretCustomerName, userOrg) {
       );
       return;
     }
-    const adminExists = await wallet.exists("adminOrg3");
+    const adminExists = await wallet.exists("adminOrg4");
     if (!adminExists) {
       console.log(
-        'An identity for the admin user "adminOrg3" does not exist in the wallet'
+        'An identity for the admin user "adminOrg4" does not exist in the wallet'
       );
       console.log("Run the enrollAdmin.js application before retrying");
       return;
@@ -33,7 +33,7 @@ async function registerCustomer(secretCustomerName, userOrg) {
     const gateway = new Gateway();
     await gateway.connect(ccpPath, {
       wallet,
-      identity: "adminOrg3", //TODO: check if we can change this
+      identity: "adminOrg4", //TODO: check if we can change this
       discovery: { enabled: true, asLocalhost: true },
     });
     const ca = gateway.getClient().getCertificateAuthority();
@@ -68,7 +68,7 @@ async function registerCustomer(secretCustomerName, userOrg) {
   }
 }
 
-async function readCustomer(secretCustomerName, userName) {
+async function readLogistics(secretCustomerName, userName) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
@@ -90,12 +90,12 @@ async function readCustomer(secretCustomerName, userName) {
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     const result = await contract.evaluateTransaction(
-      "readCustomerData",
+      "readLogisticsData",
       userName
     );
     console.log(result.toString());
@@ -106,7 +106,7 @@ async function readCustomer(secretCustomerName, userName) {
   }
 }
 
-async function readCustomerSupplierData(secretCustomerName, userName) {
+async function readLogisticsSupplierData(secretCustomerName, userName) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
@@ -128,12 +128,12 @@ async function readCustomerSupplierData(secretCustomerName, userName) {
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     const result = await contract.evaluateTransaction(
-      "readCustomerSupplierData",
+      "readLogisticsSupplierData",
       userName
     );
     return JSON.parse(result.toString());
@@ -142,7 +142,7 @@ async function readCustomerSupplierData(secretCustomerName, userName) {
   }
 }
 
-async function readCustomerHistory(secretCustomerName, userName) {
+async function readLogisticsHistory(secretCustomerName, userName) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
@@ -163,12 +163,12 @@ async function readCustomerHistory(secretCustomerName, userName) {
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     const result = await contract.evaluateTransaction(
-      "readCustomerHistory",
+      "readLogisticsHistory",
       userName
     );
     console.log(result);
@@ -178,7 +178,7 @@ async function readCustomerHistory(secretCustomerName, userName) {
   }
 }
 
-async function readCustomerByOwnerAndPassword(
+async function readLogisticsByOwnerAndPassword(
   secretCustomerName,
   userName,
   userPassword
@@ -205,9 +205,9 @@ async function readCustomerByOwnerAndPassword(
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     const result = await contract.evaluateTransaction(
       "queryCustomerByOwnerAndPassword",
@@ -221,7 +221,7 @@ async function readCustomerByOwnerAndPassword(
   }
 }
 
-async function initCustomer(
+async function initLogistics(
   secretCustomerName,
   userName,
   userAddress,
@@ -250,12 +250,12 @@ async function initCustomer(
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     await contract.submitTransaction(
-      "initCustomer",
+      "initLogistics",
       userName,
       userAddress,
       userMobile,
@@ -279,10 +279,13 @@ async function initCustomer(
   }
 }
 
-async function addProductCustomerSupplier(
+async function addProductLogistics(
   secretUserName,
+  userID,
   customerID,
   supplierID,
+  dropLocation,
+  pickUpLocation,
   productName,
   productQuantity,
   productPrice
@@ -310,18 +313,20 @@ async function addProductCustomerSupplier(
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     try {
       await contract.submitTransaction(
-        "addProductCustomerSupplier",
+        "addProduct",
+        userID,
         customerID,
         supplierID,
+        pickUpLocation,
+        dropLocation,
         productName,
-        productQuantity,
-        productPrice
+        productQuantity
       );
     } catch (err) {
       console.log(err);
@@ -345,7 +350,7 @@ async function addProductCustomerSupplier(
   }
 }
 
-async function addCustomerAmount(secretCustomerName, userName, userAmount) {
+async function addLogisticsAmount(secretCustomerName, userName, userAmount) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
@@ -367,9 +372,9 @@ async function addCustomerAmount(secretCustomerName, userName, userAmount) {
       },
     });
 
-    const network = await gateway.getNetwork("suppliercustomerchannel");
+    const network = await gateway.getNetwork("logisticschannel");
 
-    const contract = await network.getContract("suppliercustomer");
+    const contract = await network.getContract("logistics");
 
     await contract.submitTransaction("addCustomerAmount", userName, userAmount);
 
@@ -390,12 +395,9 @@ async function addCustomerAmount(secretCustomerName, userName, userAmount) {
 }
 
 module.exports = {
-  registerCustomer,
-  readCustomer,
-  readCustomerHistory,
-  readCustomerSupplierData,
-  readCustomerByOwnerAndPassword,
-  initCustomer,
-  addProductCustomerSupplier,
-  addCustomerAmount,
+  registerLogistics,
+  readLogistics,
+  readLogisticsHistory,
+  readLogisticsSupplierData,
+  readLogisticsByOwnerAndPassword,
 };
