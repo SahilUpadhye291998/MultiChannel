@@ -64,7 +64,7 @@ router.post("/login", (req, res) => {
   const secretFarmerName = req.body.secretFarmerName;
   const farmerName = req.body.farmerName;
   const farmerMobile = req.body.farmerMobile;
-  const farmerPassword = req.body.farmerPassword;
+  const farmerPassword = req.body.farmerSecret;
   const json = {};
   user
     .readFarmerByOwnerAndPassword(
@@ -91,7 +91,8 @@ router.post("/readFarmer", (req, res) => {
   const secretFarmerName = req.body.secretFarmerName;
   const farmerName = req.body.farmerName;
   const farmerMobile = req.body.farmerMobile;
-
+  console.log(secretFarmerName);
+  console.log(farmerName+farmerMobile);
   const json = {};
   user
     .readFarmer(secretFarmerName, farmerName + farmerMobile)

@@ -40,7 +40,7 @@ routes.post("/create", checkAuth, (req, res) => {
     mobileNumber: encrypt.encrypt(req.body.mobileNumber),
     secret: encrypt.encrypt(req.body.secret),
     address: encrypt.encrypt(req.body.address),
-    typeOf: encrypt.encrypt(req.body.typeof),
+    typeOf: req.body.typeof,
   };
   const user = new User(newUser);
   user

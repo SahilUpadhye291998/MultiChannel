@@ -12,6 +12,7 @@ function hash(string) {
 }
 
 function encrypt(text) {
+  console.log(text);
   const cipher = crypto.createCipheriv(algorythmn, key, iv);
   let encrypt = cipher.update(text, "utf8", "hex");
   encrypt += cipher.final("hex");
