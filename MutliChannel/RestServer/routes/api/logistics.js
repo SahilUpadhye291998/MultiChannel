@@ -34,7 +34,7 @@ router.post("/login", (req, res) => {
   const secretUsername = req.body.secretUsername;
   const userName = req.body.userName;
   const userMobile = req.body.userMobile;
-  const userPassword = req.body.userSecret;
+  const userPassword = req.body.userPassword;
   const json = {};
   user
     .readLogisticsByOwnerAndPassword(
@@ -43,7 +43,9 @@ router.post("/login", (req, res) => {
       userPassword
     )
     .then((result) => {
-      res.status(200).send(result);
+      json.code = 200;
+      json.result = result;
+      res.status(200).send(json);
     })
     .catch((error) => {
       console.log(error);
@@ -64,7 +66,7 @@ router.post("/signup", (req, res) => {
   const userMobile = req.body.userMobile;
   const userSecret = req.body.userSecret;
   const userAmount = req.body.userAmount;
-  const json = {};
+  let json = {};
   user
     .initLogistics(
       secretUsername,
@@ -75,7 +77,9 @@ router.post("/signup", (req, res) => {
       userAmount
     )
     .then((result) => {
-      res.status(200).send(result);
+      json.code = 200;
+      json.data = "Enrolled Successfully";
+      res.status(200).send(json);
     })
     .catch((error) => {
       console.log(error);
@@ -142,13 +146,13 @@ router.post("/getUserHistory", (req, res) => {
     .readLogisticsHistory(secretUsername, userName + userMobile)
     .then((result) => {
       json.code = 200;
-      json.data = result;
+      json.result = result;
       res.status(200).send(json);
     })
     .catch((error) => {
       console.log(error);
       json.code = 500;
-      json.data = "Some error has occured";
+      json.result = "Some error has occured";
       res.status(500).send(json);
     });
 });
@@ -189,10 +193,10 @@ router.post("/addProductLogisticsSupplier", (req, res) => {
   const secretUsername = req.body.secretUsername;
   const userName = req.body.userName;
   const userMobile = req.body.userMobile;
-  const supplierName = req.body.supplierName;
-  const supplierMobile = req.body.supplierMobile;
-  const customerName = req.body.customerName;
-  const customerMobile = req.body.customerMobile;
+  const reciverName = req.body.reciverName;
+  const reciverMobile = req.body.reciverMobile;
+  const callerName = req.body.callerName;
+  const callerMobile = req.body.callerMobile;
   const dropLocation = req.body.dropLocation;
   const pickUpLocation = req.body.pickUpLocation;
   const productName = req.body.productName;
@@ -206,14 +210,15 @@ router.post("/addProductLogisticsSupplier", (req, res) => {
     .addProductLogistics(
       secretUsername,
       userName + userMobile,
-      customerName + customerMobile,
-      supplierName + supplierMobile,
+      callerName + callerMobile,
+      reciverName + reciverMobile,
       dropLocation,
       pickUpLocation,
       productName,
       productQuantity
     )
     .then((result) => {
+      console.log(result);
       json.code = 200;
       json.data = result;
       console.log(result);

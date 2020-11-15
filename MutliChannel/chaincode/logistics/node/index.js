@@ -166,8 +166,8 @@ let ChainCode = class {
     }
 
     const product = {
-      customerID: args[1],
-      supplierID: args[2],
+      callerID: args[1],
+      reciverID: args[2],
       pickUpLocation: args[3],
       dropLocation: args[4],
       productName: args[5],

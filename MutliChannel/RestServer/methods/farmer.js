@@ -168,7 +168,6 @@ async function readFarmerByOwnerAndPassword(
 
 async function readFarmer(secretFarmerName, companyName) {
   try {
-
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
     console.log(walletPath);
@@ -292,6 +291,7 @@ async function addProductFarmerSupplier(
     console.log(walletPath);
     console.log(farmerID);
     console.log(supplierID);
+    console.log(secretCustomerName);
 
     const userExists = await wallet.exists(secretCustomerName);
     if (!userExists) {

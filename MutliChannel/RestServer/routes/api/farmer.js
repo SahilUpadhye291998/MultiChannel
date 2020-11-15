@@ -17,7 +17,7 @@ router.post("/registerFarmer", async (req, res) => {
       json.Message = "Company enrolled successfully";
       res.status(200).send(json);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.Message = "Some error has occured";
@@ -45,10 +45,12 @@ router.post("/signup", (req, res) => {
       farmerSecret,
       farmerAmount
     )
-    .then(result => {
-      res.status(200).send(result);
+    .then((result) => {
+      json.code = 200;
+      json.data = "Enrolled Successfully";
+      res.status(200).send(json);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";
@@ -72,10 +74,12 @@ router.post("/login", (req, res) => {
       farmerName + farmerMobile,
       farmerPassword
     )
-    .then(result => {
-      res.status(200).send(result);
+    .then((result) => {
+      json.code = 200;
+      json.result = result;
+      res.status(200).send(json);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";
@@ -92,14 +96,14 @@ router.post("/readFarmer", (req, res) => {
   const farmerName = req.body.farmerName;
   const farmerMobile = req.body.farmerMobile;
   console.log(secretFarmerName);
-  console.log(farmerName+farmerMobile);
+  console.log(farmerName + farmerMobile);
   const json = {};
   user
     .readFarmer(secretFarmerName, farmerName + farmerMobile)
-    .then(result => {
+    .then((result) => {
       res.status(200).send(result);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";
@@ -118,10 +122,10 @@ router.post("/getFarmerSupplierData", (req, res) => {
   const json = {};
   user
     .readFarmerSupplierData(secretUserName, userName + userMobile)
-    .then(result => {
+    .then((result) => {
       res.status(200).send(result);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";
@@ -144,12 +148,12 @@ router.post("/addFarmerAmount", (req, res) => {
   }
   user
     .addFarmerAmount(secretUserName, userName + userMobile, userAmount)
-    .then(result => {
+    .then((result) => {
       json.code = 200;
       json.data = result;
       res.status(200).send(json);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";
@@ -169,10 +173,10 @@ router.post("/readFarmerHistory", (req, res) => {
   const json = {};
   user
     .readFarmerHistory(secretFarmerName, farmerName + farmerMobile)
-    .then(result => {
+    .then((result) => {
       res.status(200).send(result);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";
@@ -185,7 +189,7 @@ router.post("/readFarmerHistory", (req, res) => {
 //@access   PUBLIC
 router.post("/addProductFarmerSupplier", (req, res) => {
   console.log(req.body.secretUsername);
-  const secretUserName = req.body.secretUserName;
+  const secretUserName = req.body.secretUsername;
   const farmerName = req.body.farmerName;
   const farmerMobile = req.body.farmerMobile;
   const supplierName = req.body.supplierName;
@@ -206,12 +210,12 @@ router.post("/addProductFarmerSupplier", (req, res) => {
       productQuantity,
       productPrice
     )
-    .then(result => {
+    .then((result) => {
       json.code = 200;
       json.data = result;
       res.status(200).send(json);
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       json.code = 500;
       json.data = "Some error has occured";

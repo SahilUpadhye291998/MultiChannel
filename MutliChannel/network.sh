@@ -237,10 +237,7 @@ function networkUp(){
       docker exec cli /bin/sh -c "scripts/testinovke-logistics.sh"
 
     else
-      docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml up -d
-      docker ps
-      docker exec cli /bin/sh -c "scripts/networkUp_insurance.sh"
-      docker exec cli /bin/sh -c "scripts/testChaincode_insurance.sh"
+      echo "Some config error has occured please check it once"
     fi
 }
 

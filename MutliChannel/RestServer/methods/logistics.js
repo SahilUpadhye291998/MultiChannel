@@ -146,6 +146,8 @@ async function readLogisticsHistory(secretCustomerName, userName) {
   try {
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
+    console.log(secretCustomerName);
+    console.log(userName);
 
     const userExists = await wallet.exists(secretCustomerName);
     if (!userExists) {
@@ -187,7 +189,9 @@ async function readLogisticsByOwnerAndPassword(
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = new FileSystemWallet(walletPath);
     console.log(walletPath);
+    console.log(secretCustomerName);
     console.log(userName);
+    console.log(userPassword);
 
     const userExists = await wallet.exists(secretCustomerName);
     if (!userExists) {

@@ -43,7 +43,9 @@ router.post("/login", (req, res) => {
       userPassword
     )
     .then((result) => {
-      res.status(200).send(result);
+      json.code = 200;
+      json.result = result;
+      res.status(200).send(json);
     })
     .catch((error) => {
       console.log(error);
@@ -75,7 +77,9 @@ router.post("/signup", (req, res) => {
       userAmount
     )
     .then((result) => {
-      res.status(200).send(result);
+      json.code = 200;
+      json.data = "Enrolled Successfully";
+      res.status(200).send(json);
     })
     .catch((error) => {
       console.log(error);
@@ -142,13 +146,13 @@ router.post("/getUserHistory", (req, res) => {
     .readCustomerHistory(secretUsername, userName + userMobile)
     .then((result) => {
       json.code = 200;
-      json.data = result;
+      json.result = result;
       res.status(200).send(json);
     })
     .catch((error) => {
       console.log(error);
       json.code = 500;
-      json.data = "Some error has occured";
+      json.result = "Some error has occured";
       res.status(500).send(json);
     });
 });

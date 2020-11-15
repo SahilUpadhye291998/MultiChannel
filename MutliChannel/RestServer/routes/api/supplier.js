@@ -50,7 +50,9 @@ router.post("/signup", (req, res) => {
         supplierAmount
       )
       .then((result) => {
-        res.status(200).send(result);
+        json.code = 200;
+        json.data = "Enrolled Successfully";
+        res.status(200).send(json);
       })
       .catch((error) => {
         console.log(error);
@@ -70,7 +72,9 @@ router.post("/signup", (req, res) => {
         supplierAmount
       )
       .then((result) => {
-        res.status(200).send(result);
+        json.code = 200;
+        json.data = "Enrolled Successfully";
+        res.status(200).send(json);
       })
       .catch((error) => {
         console.log(error);
@@ -90,8 +94,8 @@ router.post("/signup", (req, res) => {
         supplierAmount
       )
       .then((result) => {
-        user
-          .initSupplierCustomer(
+        userCustomer
+          .initSupplier_Customer(
             secretSupplierName,
             supplierName,
             supplierAddress,
@@ -100,7 +104,9 @@ router.post("/signup", (req, res) => {
             supplierAmount
           )
           .then((result) => {
-            res.status(200).send(result);
+            json.code = 200;
+            json.data = "Enrolled Successfully";
+            res.status(200).send(json);
           })
           .catch((error) => {
             console.log(error);
@@ -115,8 +121,6 @@ router.post("/signup", (req, res) => {
         json.data = "Some error has occured";
         res.status(500).send(json);
       });
-
-    await;
   }
 });
 
@@ -124,7 +128,8 @@ router.post("/signup", (req, res) => {
 //@desc     To login Company from Blockchain
 //@access   PUBLIC
 router.post("/login", (req, res) => {
-  console.log(req.body.secretUserName);
+  console.log("login is called");
+  console.log(req.body.secretSupplierName);
   const secretSupplierName = req.body.secretSupplierName;
   const supplierName = req.body.supplierName;
   const supplierMobile = req.body.supplierMobile;
@@ -163,6 +168,43 @@ router.post("/login", (req, res) => {
         json.data = "Some error has occured";
         res.status(500).send(json);
       });
+  } else if (type === "both") {
+    let isLoginSuccessFarmerSupplier = false;
+    let isLoginSuccessSupllierCustomer = false;
+    user
+      .readSupplierByOwnerAndPassword(
+        secretSupplierName,
+        supplierName + supplierMobile,
+        supplierPassword
+      )
+      .then((result) => {
+        console.log("OK we get the result");
+        isLoginSuccessFarmerSupplier = true;
+        userCustomer
+          .readSupplierByOwnerAndPassword_Customer(
+            secretSupplierName,
+            supplierName + supplierMobile,
+            supplierPassword
+          )
+          .then((result) => {
+            isLoginSuccessSupllierCustomer = true;
+            return res
+              .status(200)
+              .json({ code: 200, message: "Successfully Logged in" });
+          })
+          .catch((error) => {
+            console.log(error);
+            json.code = 500;
+            json.data = "Some error has occured";
+            res.status(500).send(json);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
   }
 });
 
@@ -170,7 +212,7 @@ router.post("/login", (req, res) => {
 //@desc     To read company with name in hyperledger
 //@access   PUBLIC
 router.post("/readSupplier", (req, res) => {
-  console.log(req.body.secretUserName);
+  console.log(req.body);
   const secretSupplierName = req.body.secretSupplierName;
   const supplierName = req.body.supplierName;
   const supplierMobile = req.body.supplierMobile;
@@ -178,7 +220,7 @@ router.post("/readSupplier", (req, res) => {
   const json = {};
   if (type == "farmer") {
     user
-      .readSupplier(secretSupplierName, supplierName)
+      .readSupplier(secretSupplierName, supplierName + supplierMobile)
       .then((result) => {
         res.status(200).send(result);
       })
@@ -190,9 +232,39 @@ router.post("/readSupplier", (req, res) => {
       });
   } else if (type == "supplier") {
     userCustomer
-      .readSupplier_Customer(secretSupplierName, supplierName)
+      .readSupplier_Customer(secretSupplierName, supplierName + supplierMobile)
       .then((result) => {
         res.status(200).send(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
+  } else if (type == "both") {
+    let json = {};
+    user
+      .readSupplier(secretSupplierName, supplierName + supplierMobile)
+      .then((result) => {
+        json.farmer = result;
+        userCustomer
+          .readSupplier_Customer(
+            secretSupplierName,
+            supplierName + supplierMobile
+          )
+          .then((result) => {
+            json.supplier = result;
+            json.code = 200;
+            console.log(json);
+            return res.status(200).json(json);
+          })
+          .catch((error) => {
+            console.log(error);
+            json.code = 500;
+            json.data = "Some error has occured";
+            res.status(500).send(json);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -231,7 +303,7 @@ router.post("/addSupplierAmount", (req, res) => {
         json.data = "Some error has occured";
         res.status(500).send(json);
       });
-  } else if (type == "supplier") {
+  } else if (type == "customer") {
     userCustomer
       .addSupplierAmount_Customer(
         secretUserName,
@@ -242,6 +314,36 @@ router.post("/addSupplierAmount", (req, res) => {
         json.code = 200;
         json.data = result;
         res.status(200).send(json);
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
+  } else if (type == "both") {
+    let json = {};
+    user
+      .addSupplierAmount(secretUserName, userName + userMobile, userAmount)
+      .then((result) => {
+        json.farmer = result;
+        userCustomer
+          .addSupplierAmount_Customer(
+            secretUserName,
+            userName + userMobile,
+            userAmount
+          )
+          .then((result) => {
+            json.code = 200;
+            json.supplier = result;
+            return res.status(200).send(json);
+          })
+          .catch((error) => {
+            console.log(error);
+            json.code = 500;
+            json.data = "Some error has occured";
+            res.status(500).send(json);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -290,6 +392,36 @@ router.post("/readSupplierHistory", (req, res) => {
         json.data = "Some error has occured";
         res.status(500).send(json);
       });
+  } else if (type == "both") {
+    let json = {};
+    user
+      .readSupplierHistory(secretSupplierName, supplierName + supplierMobile)
+      .then((result) => {
+        json.farmer = result;
+        userCustomer
+          .readSupplierHistory_Customer(
+            secretSupplierName,
+            supplierName + supplierMobile
+          )
+          .then((result) => {
+            json.customer = result;
+            json.code = 200;
+            console.log(json);
+            return res.status(200).send(json);
+          })
+          .catch((error) => {
+            console.log(error);
+            json.code = 500;
+            json.data = "Some error has occured";
+            res.status(500).send(json);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
   }
 });
 
@@ -318,6 +450,29 @@ router.post("/readSupplierCustomerData", (req, res) => {
         res.status(500).send(json);
       });
   } else if (type == "supplier") {
+    userCustomer
+      .readSupplierCustomerData_Customer(secretUserName, userName + userMobile)
+      .then((result) => {
+        res.status(200).send(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
+  } else if (type == "both") {
+    user
+      .readSupplierCustomerData(secretUserName, userName + userMobile)
+      .then((result) => {
+        res.status(200).send(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
     userCustomer
       .readSupplierCustomerData_Customer(secretUserName, userName + userMobile)
       .then((result) => {
@@ -367,6 +522,29 @@ router.post("/readSupplierFarmerData", (req, res) => {
         json.data = "Some error has occured";
         res.status(500).send(json);
       });
+  } else if (type == "both") {
+    user
+      .readSupplierFarmerData(secretUserName, userName + userMobile)
+      .then((result) => {
+        res.status(200).send(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
+    userCustomer
+      .readSupplierFarmerData_Customer(secretUserName, userName + userMobile)
+      .then((result) => {
+        res.status(200).send(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        json.code = 500;
+        json.data = "Some error has occured";
+        res.status(500).send(json);
+      });
   }
 });
 
@@ -374,7 +552,7 @@ router.post("/readSupplierFarmerData", (req, res) => {
 //@desc     Transaction history of the user
 //@access   PUBLIC
 router.post("/addProductCustomerSupplier", (req, res) => {
-  const secretUserName = req.body.secretUserName;
+  const secretUserName = req.body.secretUsername;
   const userName = req.body.userName;
   const userMobile = req.body.userMobile;
   const supplierName = req.body.supplierName;
@@ -383,54 +561,32 @@ router.post("/addProductCustomerSupplier", (req, res) => {
   const productQuantity = req.body.productQuantity;
   const productPrice = req.body.productPrice;
   const type = req.body.type;
-
+  console.log(userName + userMobile);
+  console.log(supplierName + supplierMobile);
   const json = {};
   if (parseInt(productPrice) <= 0 || parseInt(productQuantity) <= 0) {
     return res.status(500).json({ message: "Price or quantity is not valid" });
   }
-  if (type == "farmer") {
-    user
-      .addProductCustomerSupplier(
-        secretUserName,
-        userName + userMobile,
-        supplierName + supplierMobile,
-        productName,
-        productQuantity,
-        productPrice
-      )
-      .then((result) => {
-        json.code = 200;
-        json.data = result;
-        res.status(200).send(json);
-      })
-      .catch((error) => {
-        console.log(error);
-        json.code = 500;
-        json.data = "Some error has occured";
-        res.status(500).send(json);
-      });
-  } else if (type == "supplier") {
-    userCustomer
-      .addProductCustomerSupplier_Customer(
-        secretUserName,
-        userName + userMobile,
-        supplierName + supplierMobile,
-        productName,
-        productQuantity,
-        productPrice
-      )
-      .then((result) => {
-        json.code = 200;
-        json.data = result;
-        res.status(200).send(json);
-      })
-      .catch((error) => {
-        console.log(error);
-        json.code = 500;
-        json.data = "Some error has occured";
-        res.status(500).send(json);
-      });
-  }
+  userCustomer
+    .addProductCustomerSupplier_Customer(
+      secretUserName,
+      userName + userMobile,
+      supplierName + supplierMobile,
+      productName,
+      productQuantity,
+      productPrice
+    )
+    .then((result) => {
+      json.code = 200;
+      json.data = result;
+      res.status(200).send(json);
+    })
+    .catch((error) => {
+      console.log(error);
+      json.code = 500;
+      json.data = "Some error has occured";
+      res.status(500).send(json);
+    });
 });
 
 //@route    POST api/user/addProductCustomerSupplier
@@ -438,7 +594,7 @@ router.post("/addProductCustomerSupplier", (req, res) => {
 //@access   PUBLIC
 router.post("/addProductFarmerSupplier", (req, res) => {
   console.log(req.body.secretUsername);
-  const secretUserName = req.body.secretUserName;
+  const secretUserName = req.body.secretUsername;
   const farmerName = req.body.farmerName;
   const farmerMobile = req.body.farmerMobile;
   const supplierName = req.body.supplierName;
@@ -452,49 +608,26 @@ router.post("/addProductFarmerSupplier", (req, res) => {
   if (parseInt(productPrice) <= 0 || parseInt(productQuantity) <= 0) {
     return res.status(500).json({ message: "Price or quantity is not valid" });
   }
-  if (type == "farmer") {
-    user
-      .addProductFarmerSupplier(
-        secretUserName,
-        farmerName + farmerMobile,
-        supplierName + supplierMobile,
-        productName,
-        productQuantity,
-        productPrice
-      )
-      .then((result) => {
-        json.code = 200;
-        json.data = result;
-        res.status(200).send(json);
-      })
-      .catch((error) => {
-        console.log(error);
-        json.code = 500;
-        json.data = "Some error has occured";
-        res.status(500).send(json);
-      });
-  } else if (type == "supplier") {
-    userCustomer
-      .addProductFarmerSupplier_Customer(
-        secretUserName,
-        farmerName + farmerMobile,
-        supplierName + supplierMobile,
-        productName,
-        productQuantity,
-        productPrice
-      )
-      .then((result) => {
-        json.code = 200;
-        json.data = result;
-        res.status(200).send(json);
-      })
-      .catch((error) => {
-        console.log(error);
-        json.code = 500;
-        json.data = "Some error has occured";
-        res.status(500).send(json);
-      });
-  }
+  user
+    .addProductFarmerSupplier(
+      secretUserName,
+      farmerName + farmerMobile,
+      supplierName + supplierMobile,
+      productName,
+      productQuantity,
+      productPrice
+    )
+    .then((result) => {
+      json.code = 200;
+      json.data = result;
+      res.status(200).send(json);
+    })
+    .catch((error) => {
+      console.log(error);
+      json.code = 500;
+      json.data = "Some error has occured";
+      res.status(500).send(json);
+    });
 });
 
 module.exports = router;

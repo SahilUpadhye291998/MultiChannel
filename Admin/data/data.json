@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Farmer69",
+    "password": "F69!",
+    "mobileNumber": "696934567890",
+    "secret": "farmer69",
+    "address": "Sample Address 69",
+    "typeof": "farmer"
+  },
+  {
+    "name": "Supplier69",
+    "password": "S69!",
+    "mobileNumber": "696934567890",
+    "secret": "Supplier69",
+    "address": "Sample Address 69",
+    "typeof": "Supplier"
+  },
+  {
+    "name": "Farmer69",
+    "password": "F69!",
+    "mobileNumber": "696934567890",
+    "secret": "farmer69",
+    "address": "Sample Address 69",
+    "typeof": "farmer"
+  },
+  {
+    "name": "Customer69",
+    "password": "F69!",
+    "mobileNumber": "696934567890",
+    "secret": "Customer69",
+    "address": "Sample Address 69",
+    "typeof": "customer"
+  },
+  {
+    "name": "Logistics",
+    "password": "L69!",
+    "mobileNumber": "696934567890",
+    "secret": "Logistics69",
+    "address": "Sample Address 69",
+    "typeof": "logistics"
+  }
+]

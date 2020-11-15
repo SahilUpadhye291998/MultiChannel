@@ -264,6 +264,8 @@ async function addProductCustomerSupplier_Customer(
     const wallet = new FileSystemWallet(walletPath);
     console.log(walletPath);
     console.log(secretSupplierName);
+    console.log(customerID);
+    console.log(supplierID);
 
     const userExists = await wallet.exists(secretSupplierName);
     if (!userExists) {

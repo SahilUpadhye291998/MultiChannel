@@ -213,7 +213,7 @@ async function readSupplierByOwnerAndPassword(
     const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
-      "querySupplierByOwnerAndPassword",
+      "querySupplierOrgByOwnerAndPassword",
       companyName,
       companyPassword
     );
@@ -251,7 +251,7 @@ async function readSupplier(secretSupplierName, companyName) {
     const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
-      "querySupplierByOwner",
+      "readSupplierData",
       companyName
     );
     return JSON.parse(result.toString());
@@ -287,7 +287,7 @@ async function readSupplierHistory(secretSupplierName, companyName) {
     const contract = await network.getContract("farmersupplier");
 
     const result = await contract.evaluateTransaction(
-      "getHistoryForSupplier",
+      "readSupplierHistory",
       companyName
     );
     return JSON.parse(result.toString());

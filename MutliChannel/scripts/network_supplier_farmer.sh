@@ -19,4 +19,3 @@ echo "==================channel install for peer0.org2.example.com==============
 peer chaincode install -n farmersupplier -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode/farmer_supplier/node/
 echo "====================================================="
 
-# peer lifecycle chaincode queryinstalled | grep -n 2 | awk '{print $3}'

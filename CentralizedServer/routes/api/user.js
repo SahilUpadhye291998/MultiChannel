@@ -32,7 +32,7 @@ routes.get("/get", checkAuth, (req, res) => {
     });
 });
 
-routes.post("/create", checkAuth, (req, res) => {
+routes.post("/create", (req, res) => {
   console.log(`create route is called`);
   const newUser = {
     name: encrypt.encrypt(req.body.name),
@@ -59,7 +59,7 @@ routes.post("/create", checkAuth, (req, res) => {
     });
 });
 
-routes.put("/update/:id", checkAuth, (req, res) => {
+routes.get("/update/:id", checkAuth, (req, res) => {
   console.log(`Update will be placed here`);
   User.findById({ _id: req.params.id }).then((user) => {
     user.isAuthenticated = true;
