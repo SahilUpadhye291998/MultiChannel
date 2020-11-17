@@ -1,0 +1,2 @@
+cd ./Admin
+npm start

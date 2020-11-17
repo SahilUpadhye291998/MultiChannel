@@ -1,0 +1,2 @@
+cd ./Farmer
+npm start

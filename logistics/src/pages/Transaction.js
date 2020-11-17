@@ -1,6 +1,6 @@
 import Page from 'components/Page';
 import React from 'react';
-import { Card, CardBody, CardHeader, Col, Row, Table } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Row, } from 'reactstrap';
 import DataTable from 'react-data-table-component';
 import Cookie from 'universal-cookie';
 import axios from 'axios';

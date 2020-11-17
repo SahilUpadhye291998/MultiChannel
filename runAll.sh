@@ -1,0 +1,1 @@
+sh -x admin.sh & sh -x farmer.sh & sh -x supplier.sh & sh -x customer.sh & sh -x logistics.sh 

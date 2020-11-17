@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 import './Loginpage.css';
 import axios from 'axios';
 import Cookie from 'universal-cookie';

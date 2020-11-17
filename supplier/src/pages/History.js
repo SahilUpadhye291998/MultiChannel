@@ -1,6 +1,6 @@
 import Page from 'components/Page';
 import React from 'react';
-import { Card, CardBody, CardHeader, Col, Row, Table } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Cookie from 'universal-cookie';
@@ -86,7 +86,7 @@ class History extends React.Component {
       };
       return outputElement;
     });
-    if (response.data.code == 200) {
+    if (response.data.code === 200) {
       this.setState({
         history_farmer: dataForTableFarmer,
         history_customer: dataForTableCustomer,

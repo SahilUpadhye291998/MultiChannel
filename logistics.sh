@@ -1,0 +1,2 @@
+cd ./logistics
+npm start

@@ -1,0 +1,2 @@
+cd ./customer
+npm start

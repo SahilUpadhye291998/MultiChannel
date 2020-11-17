@@ -3,7 +3,7 @@ import sidebarBgImage from 'assets/img/sidebar/sidebar-4.jpg';
 import SourceLink from 'components/SourceLink';
 import React from 'react';
 import { FaGithub } from 'react-icons/fa';
-import { MdAccountCircle, MdDashboard, MdWeb, MdWidgets } from 'react-icons/md';
+import { MdAccountCircle, MdDashboard, MdWeb, } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import {
   // UncontrolledTooltip,

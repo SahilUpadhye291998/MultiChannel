@@ -27,7 +27,6 @@ export default class Loginpage extends Component {
       mobileNumber,
       secret,
       address,
-      isAuthenticated,
       typeOf,
     } = this.state;
     //TODO: Add the signup request
